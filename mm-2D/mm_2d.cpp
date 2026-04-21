@@ -260,20 +260,20 @@ int main(int argc, char **argv) {
         cout << "Grid size    : " << sqrtP << " x " << sqrtP << endl;
         cout << "Matrix sizes : A(" << m << "x" << n << "), B(" << n << "x" << q << "), C(" << m << "x" << q << ")" << endl;
         cout << std::fixed << std::setprecision(6);
-        cout << "Parallel time: " << parallel_time << " seconds" << endl;
-        cout << "Serial time  : " << serial_time << " seconds" << endl;
-        if (parallel_time > 0.0) {
-            cout << "Speedup      : " << (serial_time / parallel_time) << endl;
-            cout << "Cost         : " << (size * parallel_time) << endl;
-        }
-        cout << "Correctness  : " << (correct ? "PASSED" : "FAILED") << endl;
+        cout << "Parallel Time: " << parallel_time << " seconds" << endl;
+        // cout << "Serial time  : " << serial_time << " seconds" << endl;
+        // if (parallel_time > 0.0) {
+        //     cout << "Speedup      : " << (serial_time / parallel_time) << endl;
+        //     cout << "Cost         : " << (size * parallel_time) << endl;
+        // }
+        // cout << "Correctness  : " << (correct ? "PASSED" : "FAILED") << endl;
 
-        if (print_result) {
-            print_matrix(A, m, n, "A");
-            print_matrix(B, n, q, "B");
-            print_matrix(C, m, q, "C_parallel");
-            print_matrix(C_serial, m, q, "C_serial");
-        }
+        // if (print_result) {
+        //     print_matrix(A, m, n, "A");
+        //     print_matrix(B, n, q, "B");
+        //     print_matrix(C, m, q, "C_parallel");
+        //     print_matrix(C_serial, m, q, "C_serial");
+        // }
     }
 
     MPI_Finalize();
