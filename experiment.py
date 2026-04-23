@@ -28,8 +28,13 @@ if __name__ == "__main__":
                     job_name = f"matmul_m{m}_n{n}_q{q}_p{p}"
                     out_file = SCRIPT_DIR / "slurm_logs" / f"{job_name}_%j.out"
                     out_file.parent.mkdir(parents=True, exist_ok=True)
-
                     # Write a temporary sbatch script for this job
+                    srun_cmd = (
+                        f"srun {EXP_DIR} {m} {n} {q}"
+                        f" --p={p}"
+                        f" --csv={CSV_DIR}/{job_name}.csv"
+                        f" --svg={SVG_DIR}/{job_name}.svg"
+                    )
                     sbatch_script = f"""#!/bin/bash
 #SBATCH --job-name={job_name}
 #SBATCH --partition=compute
@@ -40,9 +45,7 @@ if __name__ == "__main__":
 #SBATCH --time=00:10:00
 #SBATCH --output={out_file}
 
-srun {EXP_DIR} {m} {n} {q} --p={p} \\
-     --csv={CSV_DIR}/uniform_shape_m{m}_n{n}_q{q}_p{p}.csv \\
-     --svg={SVG_DIR}/uniform_shape_m{m}_n{n}_q{q}_p{p}.svg
+{srun_cmd}
 """
                     script_path = SCRIPT_DIR / "slurm_logs" / f"{job_name}.sh"
                     script_path.write_text(sbatch_script)
