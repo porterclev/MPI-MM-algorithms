@@ -459,7 +459,7 @@ int main(int argc, char* argv[]){
         std::vector<int> P = config.p_values;
 
         const std::vector<ImplementationInfo> implementations {
-            // {"Implementation 1", "Implementation 1 (Serial)", "#1d4ed8", "./bin/mm_serial", false},
+            {"Implementation 1", "Implementation 1 (Serial)", "#1d4ed8", "./bin/mm_serial", false},
             {"Implementation 2", "Implementation 2 (MM-1D)", "#ea580c", "./bin/mm_1d", false},
             {"Implementation 3", "Implementation 3 (MM-2D)", "#059669", "./bin/mm_2d", false},
         };
