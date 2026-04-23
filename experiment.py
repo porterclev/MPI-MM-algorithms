@@ -53,6 +53,8 @@ if __name__ == "__main__":
                     "#SBATCH --time=00:10:00",
                     "#SBATCH --output=" + out_file,
                     "",
+                    "module load mpi/mpich-3.2-x86_64",
+                    "",
                     srun_line,
                 ]
 
