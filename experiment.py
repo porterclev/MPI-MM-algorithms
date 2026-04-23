@@ -30,20 +30,22 @@ if __name__ == "__main__":
                 out_file = LOG_DIR / "{}_%%j.out".format(job_name) 
                 script_path = LOG_DIR / "{}.sh".format(job_name)
 
-                sbatch_script = f"""#!/bin/bash
-#SBATCH --job-name={job_name}
-#SBATCH --partition=compute
-#SBATCH --nodes=1
-#SBATCH --ntasks={MAX_P}
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=4G
-#SBATCH --time=00:10:00
-#SBATCH --output={out_file}
-
-srun {EXP_DIR} {m} {n} {q} --p={P} \\
-     --csv={CSV_DIR}/{job_name}.csv \\
-     --svg={SVG_DIR}/{job_name}.svg
-"""
+                sbatch_script = (
+                                "#!/bin/bash\n"
+                                f"#SBATCH --job-name={job_name}\n"
+                                "#SBATCH --partition=compute\n"
+                                "#SBATCH --nodes=1\n"
+                                f"#SBATCH --ntasks={MAX_P}\n"
+                                "#SBATCH --cpus-per-task=1\n"
+                                "#SBATCH --mem=4G\n"
+                                "#SBATCH --time=00:10:00\n"
+                                f"#SBATCH --output={out_file}\n"
+                                "\n"
+                                f"srun {EXP_DIR} {m} {n} {q}"
+                                f" --p={P}"
+                                f" --csv={CSV_DIR}/{job_name}.csv"
+                                f" --svg={SVG_DIR}/{job_name}.svg\n"
+                            )
                 script_path.write_text(sbatch_script)
 
                 result = subprocess.run(
