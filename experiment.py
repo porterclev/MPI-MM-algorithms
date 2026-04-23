@@ -42,6 +42,8 @@ if __name__ == "__main__":
                 job_name = "matmul_{}_{}_{}" .format(m, n, q)
                 out_file = LOG_DIR / "{}_%%j.out".format(job_name) 
                 script_path = LOG_DIR / "{}.sh".format(job_name)
+                csv = CSV_DIR / "M:{}_N:{}_Q:{}.csv".format(m, n, q)
+                svg = SVG_DIR / "M:{}_N:{}_Q:{}.svg".format(m, n, q)
 
                 sbatch_script = (
                                     template
@@ -53,8 +55,8 @@ if __name__ == "__main__":
                                     .replace("N", str(n))
                                     .replace("Q", str(q))
                                     .replace("P", str(P))
-                                    .replace("CSV_DIR", str(CSV_DIR))
-                                    .replace("SVG_DIR", str(SVG_DIR))
+                                    .replace("CSV_DIR", str(csv))
+                                    .replace("SVG_DIR", str(svg))
                                 )
                 script_path.write_text(sbatch_script)
 
