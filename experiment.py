@@ -13,7 +13,7 @@ if __name__ == "__main__":
     CSV_DIR.mkdir(parents=True, exist_ok=True)
     LOG_DIR.mkdir(parents=True, exist_ok=True)
 
-    # subprocess.run(["bash", str(BUILD_SCRIPT)], check=True)
+    subprocess.run(["bash", str(BUILD_SCRIPT)], check=True)
     print("=============Finished Building=============")
 
     scaler = 1
@@ -54,6 +54,7 @@ if __name__ == "__main__":
                     "#SBATCH --output=" + out_file,
                     "",
                     "module load openmpi/3.1.6",
+                    "export PATH=/apps/openmpi3/bin:$PATH",
 		            "export LD_LIBRARY_PATH=/apps/openmpi3/lib:$LD_LIBRARY_PATH",
                     "cd " + str(SCRIPT_DIR),
                     "",
