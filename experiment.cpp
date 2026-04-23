@@ -482,7 +482,7 @@ int main(int argc, char* argv[]){
         std::vector<BenchmarkRow> rows;
 
         for(int p : P){
-            std::cout << "Running P=" << p << "..." << std::flush;
+            std::cout << "Running P= " << p << "..." << std::flush;
             // CommandResult serial_peak;
             // for(int test = 0; test < TRIALS; test++){
             //     CommandResult res = run_implementation(implementations[0], M, N, Q, p);
@@ -510,7 +510,7 @@ int main(int argc, char* argv[]){
             rows.push_back(make_benchmark_row(implementations[0], serial_result, M, N, Q, p, serial_result.seconds, serial_ok));
 
             for(std::size_t i = 1; i < implementations.size(); ++i){
-                std::cout << implementations[i].heading << std::endl;
+                // std::cout << implementations[i].heading << std::endl;
                 
                 CommandResult peak;
                 for(int test = 0; test < TRIALS; test++){
@@ -523,7 +523,7 @@ int main(int argc, char* argv[]){
                 const CommandResult result = peak;
                 rows.push_back(make_benchmark_row(implementations[i], result, M, N, Q, p, serial_result.seconds, serial_ok));
             }
-            std::cout << " done \n" << std::flush;
+            std::cout << " done\n" << std::flush;
         }
 
         print_table(rows);
