@@ -55,19 +55,22 @@ struct ImplementationInfo {
     std::string implementation_name;
     std::string color;
     std::string command_path;
-    bool includes_p;
+    bool launch_with_mpi;
+    bool is_serial;
 
     ImplementationInfo(
         const std::string& heading_value,
         const std::string& implementation_name_value,
         const std::string& color_value,
         const std::string& command_path_value,
-        bool includes_p_value
+        bool launch_with_mpi_value,
+        bool is_serial_value
     ) : heading(heading_value),
         implementation_name(implementation_name_value),
         color(color_value),
         command_path(command_path_value),
-        includes_p(includes_p_value){}
+        launch_with_mpi(launch_with_mpi_value),
+        is_serial(is_serial_value){}
 };
 
 std::string trim(const std::string& value){
@@ -160,9 +163,18 @@ CommandResult run_command(const std::string& command){
 
     result.exit_code = pclose(pipe);
 
-    const std::string marker = "Time:";
-    const std::size_t marker_pos = result.raw_output.find(marker);
-    if(marker_pos != std::string::npos){
+    const std::vector<std::string> markers {
+        "Parallel Time:",
+        "Total Runtime:",
+        "Time:"
+    };
+
+    for(const std::string& marker : markers){
+        const std::size_t marker_pos = result.raw_output.find(marker);
+        if(marker_pos == std::string::npos){
+            continue;
+        }
+
         std::size_t number_start = marker_pos + marker.size();
         while(number_start < result.raw_output.size() && std::isspace(static_cast<unsigned char>(result.raw_output[number_start]))){
             ++number_start;
@@ -180,6 +192,7 @@ CommandResult run_command(const std::string& command){
 
         if(number_end > number_start){
             result.seconds = std::stod(result.raw_output.substr(number_start, number_end - number_start));
+            break;
         }
     }
 
@@ -400,14 +413,16 @@ void print_table(const std::vector<BenchmarkRow>& rows){
     }
 }
 
-std::string build_command(const std::string& command_path, int m, int n, int q, int p, bool includes_p){
-    std::string command =
-        command_path + " " +
+std::string build_command(const ImplementationInfo& implementation, int m, int n, int q, int p){
+    std::string command;
+    if(implementation.launch_with_mpi){
+        command += "mpirun -np " + std::to_string(p) + " ";
+    }
+
+    command += implementation.command_path + " " +
         std::to_string(m) + " " +
         std::to_string(n) + " " +
         std::to_string(q);
-
-    if(includes_p) command += " " + std::to_string(p);
 
     return command;
 }
@@ -427,7 +442,7 @@ BenchmarkRow make_benchmark_row(const ImplementationInfo& implementation, const 
     row.raw_output = trim(result.raw_output);
 
     const bool row_ok = row.status == "ok";
-    if(!implementation.includes_p){
+    if(implementation.is_serial){
         row.speedup = row_ok ? 1.0 : std::numeric_limits<double>::quiet_NaN();
         row.cost = result.seconds;
         return row;
@@ -441,7 +456,7 @@ BenchmarkRow make_benchmark_row(const ImplementationInfo& implementation, const 
 }
 
 CommandResult run_implementation(const ImplementationInfo& implementation, int m, int n, int q, int p){
-    const std::string command = build_command(implementation.command_path, m, n, q, p, implementation.includes_p);
+    const std::string command = build_command(implementation, m, n, q, p);
     return run_command(command);
 }
 
@@ -459,9 +474,9 @@ int main(int argc, char* argv[]){
         std::vector<int> P = config.p_values;
 
         const std::vector<ImplementationInfo> implementations {
-            {"Implementation 1", "Implementation 1 (Serial)", "#1d4ed8", "./bin/mm_serial", false},
-            {"Implementation 2", "Implementation 2 (MM-1D)", "#ea580c", "./bin/mm_1d", false},
-            {"Implementation 3", "Implementation 3 (MM-2D)", "#059669", "./bin/mm_2d", false},
+            {"Implementation 1", "Implementation 1 (Serial)", "#1d4ed8", "./bin/mm_serial", false, true},
+            {"Implementation 2", "Implementation 2 (MM-1D)", "#ea580c", "./bin/mm_1d", true, false},
+            {"Implementation 3", "Implementation 3 (MM-2D)", "#059669", "./bin/mm_2d", true, false},
         };
 
         std::vector<BenchmarkRow> rows;
