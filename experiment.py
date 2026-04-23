@@ -3,7 +3,7 @@ from pathlib import Path
 
 if __name__ == "__main__":
     SCRIPT_DIR = Path(__file__).resolve().parent
-    BUILD_SCRIPT = SCRIPT_DIR / "build_all.sh"
+    BUILD_SCRIPT = SCRIPT_DIR / "scripts/build_all.sh"
     SVG_DIR = SCRIPT_DIR / "graphs"
     CSV_DIR = SCRIPT_DIR / "csvs"
     EXP_DIR = SCRIPT_DIR / "bin" / "group_assignment"
@@ -13,6 +13,19 @@ if __name__ == "__main__":
     CSV_DIR.mkdir(parents=True, exist_ok=True)
     LOG_DIR.mkdir(parents=True, exist_ok=True)
 
+    template = (
+        "#!/bin/bash\n"
+        "#SBATCH --job-name=JOB_NAME\n"
+        "#SBATCH --partition=compute\n"
+        "#SBATCH --nodes=1\n"
+        "#SBATCH --ntasks=MAX_P\n"
+        "#SBATCH --cpus-per-task=1\n"
+        "#SBATCH --mem=4G\n"
+        "#SBATCH --time=00:10:00\n"
+        "#SBATCH --output=OUT_FILE\n"
+        "\n"
+        "srun EXP_DIR M N Q --p=P --csv=CSV_DIR/JOB_NAME.csv --svg=SVG_DIR/JOB_NAME.svg\n"
+    )
     subprocess.run(["bash", str(BUILD_SCRIPT)], check=True)
     print("=============Finished Building=============")
 
@@ -31,21 +44,18 @@ if __name__ == "__main__":
                 script_path = LOG_DIR / "{}.sh".format(job_name)
 
                 sbatch_script = (
-                                "#!/bin/bash\n"
-                                f"#SBATCH --job-name={job_name}\n"
-                                "#SBATCH --partition=compute\n"
-                                "#SBATCH --nodes=1\n"
-                                f"#SBATCH --ntasks={MAX_P}\n"
-                                "#SBATCH --cpus-per-task=1\n"
-                                "#SBATCH --mem=4G\n"
-                                "#SBATCH --time=00:10:00\n"
-                                f"#SBATCH --output={out_file}\n"
-                                "\n"
-                                f"srun {EXP_DIR} {m} {n} {q}"
-                                f" --p={P}"
-                                f" --csv={CSV_DIR}/{job_name}.csv"
-                                f" --svg={SVG_DIR}/{job_name}.svg\n"
-                            )
+                                    template
+                                    .replace("JOB_NAME", job_name)
+                                    .replace("MAX_P", str(MAX_P))
+                                    .replace("OUT_FILE", str(out_file))
+                                    .replace("EXP_DIR", str(EXP_DIR))
+                                    .replace("M", str(m))
+                                    .replace("N", str(n))
+                                    .replace("Q", str(q))
+                                    .replace("P", str(P))
+                                    .replace("CSV_DIR", str(CSV_DIR))
+                                    .replace("SVG_DIR", str(SVG_DIR))
+                                )
                 script_path.write_text(sbatch_script)
 
                 result = subprocess.run(
