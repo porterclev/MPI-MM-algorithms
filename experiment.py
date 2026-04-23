@@ -54,6 +54,7 @@ if __name__ == "__main__":
                     "#SBATCH --output=" + out_file,
                     "",
                     "module load openmpi/3.1.6",
+		    "export LD_LIBRARY_PATH=/apps/openmpi3/lib:$LD_LIBRARY_PATH",
                     "",
                     srun_line,
                 ]
