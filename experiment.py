@@ -21,14 +21,14 @@ if __name__ == "__main__":
     N = list(range(5 * scaler, 10 * scaler, 1 * scaler))
     Q = list(range(5 * scaler, 10 * scaler, 1 * scaler))
     P = "1,4,9"
-    MAX_P = max(int(p) for p in P.split(","))  # Slurm needs to know the max tasks to allocate
+    MAX_P = max(int(p) for p in P.split(","))
 
     for m in M:
         for n in N:
             for q in Q:
-                job_name = f"matmul_{m}_{n}_{q}"  # concise, unique per actual job
-                out_file = LOG_DIR / f"{job_name}_%j.out"
-                script_path = LOG_DIR / f"{job_name}.sh"
+                job_name = "matmul_{}_{}_{}" .format(m, n, q)
+                out_file = LOG_DIR / "{}_%%j.out".format(job_name) 
+                script_path = LOG_DIR / "{}.sh".format(job_name)
 
                 sbatch_script = f"""#!/bin/bash
 #SBATCH --job-name={job_name}
