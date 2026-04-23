@@ -60,7 +60,9 @@ if __name__ == "__main__":
 
                 result = subprocess.run(
                     ["sbatch", str(script_path)],
-                    capture_output=True, text=True
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True
                 )
                 print(f"Submitted {job_name}: {result.stdout.strip()}")
                 if result.returncode != 0:
