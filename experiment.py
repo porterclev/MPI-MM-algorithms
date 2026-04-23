@@ -26,7 +26,7 @@ if __name__ == "__main__":
         "\n"
         "srun EXP_DIR M N Q --p=P --csv=CSV_DIR/JOB_NAME.csv --svg=SVG_DIR/JOB_NAME.svg\n"
     )
-    subprocess.run(["bash", str(BUILD_SCRIPT)], check=True)
+    # subprocess.run(["bash", str(BUILD_SCRIPT)], check=True)
     print("=============Finished Building=============")
 
     scaler = 1
