@@ -19,27 +19,22 @@
 <text x="80.000" y="124.000" text-anchor="end" font-size="11" font-family="monospace">0.000</text>
 <line x1="90.000" y1="120.000" x2="90.000" y2="365.000" stroke="#f1f5f9"/>
 <text x="90.000" y="385.000" text-anchor="middle" font-size="11" font-family="monospace">1</text>
-<line x1="577.500" y1="120.000" x2="577.500" y2="365.000" stroke="#f1f5f9"/>
-<text x="577.500" y="385.000" text-anchor="middle" font-size="11" font-family="monospace">4</text>
 <line x1="1390.000" y1="120.000" x2="1390.000" y2="365.000" stroke="#f1f5f9"/>
-<text x="1390.000" y="385.000" text-anchor="middle" font-size="11" font-family="monospace">9</text>
+<text x="1390.000" y="385.000" text-anchor="middle" font-size="11" font-family="monospace">4</text>
 <text x="740.000" y="410.000" text-anchor="middle" font-size="12" font-family="sans-serif">P (threads / processors)</text>
 <text x="38.000" y="242.500" transform="rotate(-90 30.000 242.500)" text-anchor="middle" font-size="12" font-family="sans-serif">Seconds</text>
-<polyline fill="none" stroke="#1d4ed8" stroke-width="2.5" points="90,296.805 577.5,320.58 1390,316.826"/>
-<circle cx="90.000" cy="296.805" r="4" fill="#1d4ed8"/>
-<circle cx="577.500" cy="320.580" r="4" fill="#1d4ed8"/>
-<circle cx="1390.000" cy="316.826" r="4" fill="#1d4ed8"/>
+<polyline fill="none" stroke="#1d4ed8" stroke-width="2.5" points="90,309.318 1390,317.723"/>
+<circle cx="90.000" cy="309.318" r="4" fill="#1d4ed8"/>
+<circle cx="1390.000" cy="317.723" r="4" fill="#1d4ed8"/>
 <line x1="1400.000" y1="130.000" x2="1450.000" y2="130.000" stroke="#1d4ed8" stroke-width="3"/>
 <text x="1460.000" y="134.000" font-size="11" font-family="sans-serif">Implementation 1 (Serial)</text>
-<polyline fill="none" stroke="#ea580c" stroke-width="2.5" points="90,321.876 577.5,245.592 1390,189.505"/>
-<circle cx="90.000" cy="321.876" r="4" fill="#ea580c"/>
-<circle cx="577.500" cy="245.592" r="4" fill="#ea580c"/>
-<circle cx="1390.000" cy="189.505" r="4" fill="#ea580c"/>
+<polyline fill="none" stroke="#ea580c" stroke-width="2.5" points="90,281.699 1390,150.63"/>
+<circle cx="90.000" cy="281.699" r="4" fill="#ea580c"/>
+<circle cx="1390.000" cy="150.630" r="4" fill="#ea580c"/>
 <line x1="1400.000" y1="148.000" x2="1450.000" y2="148.000" stroke="#ea580c" stroke-width="3"/>
 <text x="1460.000" y="152.000" font-size="11" font-family="sans-serif">Implementation 2 (MM-1D)</text>
-<polyline fill="none" stroke="#059669" stroke-width="2.5" points="90,336.221 577.5,234.242 1390,142.273"/>
-<circle cx="90.000" cy="336.221" r="4" fill="#059669"/>
-<circle cx="577.500" cy="234.242" r="4" fill="#059669"/>
+<polyline fill="none" stroke="#059669" stroke-width="2.5" points="90,311.419 1390,142.273"/>
+<circle cx="90.000" cy="311.419" r="4" fill="#059669"/>
 <circle cx="1390.000" cy="142.273" r="4" fill="#059669"/>
 <line x1="1400.000" y1="166.000" x2="1450.000" y2="166.000" stroke="#059669" stroke-width="3"/>
 <text x="1460.000" y="170.000" font-size="11" font-family="sans-serif">Implementation 3 (MM-2D)</text>
@@ -50,39 +45,34 @@
 <line x1="90.000" y1="725.000" x2="1390.000" y2="725.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
 <text x="80.000" y="729.000" text-anchor="end" font-size="11" font-family="monospace">0.000</text>
 <line x1="90.000" y1="676.000" x2="1390.000" y2="676.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
-<text x="80.000" y="680.000" text-anchor="end" font-size="11" font-family="monospace">0.521</text>
+<text x="80.000" y="680.000" text-anchor="end" font-size="11" font-family="monospace">0.229</text>
 <line x1="90.000" y1="627.000" x2="1390.000" y2="627.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
-<text x="80.000" y="631.000" text-anchor="end" font-size="11" font-family="monospace">1.043</text>
+<text x="80.000" y="631.000" text-anchor="end" font-size="11" font-family="monospace">0.457</text>
 <line x1="90.000" y1="578.000" x2="1390.000" y2="578.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
-<text x="80.000" y="582.000" text-anchor="end" font-size="11" font-family="monospace">1.564</text>
+<text x="80.000" y="582.000" text-anchor="end" font-size="11" font-family="monospace">0.686</text>
 <line x1="90.000" y1="529.000" x2="1390.000" y2="529.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
-<text x="80.000" y="533.000" text-anchor="end" font-size="11" font-family="monospace">2.085</text>
+<text x="80.000" y="533.000" text-anchor="end" font-size="11" font-family="monospace">0.915</text>
 <line x1="90.000" y1="480.000" x2="1390.000" y2="480.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
-<text x="80.000" y="484.000" text-anchor="end" font-size="11" font-family="monospace">2.607</text>
+<text x="80.000" y="484.000" text-anchor="end" font-size="11" font-family="monospace">1.143</text>
 <line x1="90.000" y1="480.000" x2="90.000" y2="725.000" stroke="#f1f5f9"/>
 <text x="90.000" y="745.000" text-anchor="middle" font-size="11" font-family="monospace">1</text>
-<line x1="577.500" y1="480.000" x2="577.500" y2="725.000" stroke="#f1f5f9"/>
-<text x="577.500" y="745.000" text-anchor="middle" font-size="11" font-family="monospace">4</text>
 <line x1="1390.000" y1="480.000" x2="1390.000" y2="725.000" stroke="#f1f5f9"/>
-<text x="1390.000" y="745.000" text-anchor="middle" font-size="11" font-family="monospace">9</text>
+<text x="1390.000" y="745.000" text-anchor="middle" font-size="11" font-family="monospace">4</text>
 <text x="740.000" y="770.000" text-anchor="middle" font-size="12" font-family="sans-serif">P (threads / processors)</text>
 <text x="38.000" y="602.500" transform="rotate(-90 30.000 602.500)" text-anchor="middle" font-size="12" font-family="sans-serif">Speedup</text>
-<polyline fill="none" stroke="#1d4ed8" stroke-width="2.5" points="90,631.005 577.5,631.005 1390,631.005"/>
-<circle cx="90.000" cy="631.005" r="4" fill="#1d4ed8"/>
-<circle cx="577.500" cy="631.005" r="4" fill="#1d4ed8"/>
-<circle cx="1390.000" cy="631.005" r="4" fill="#1d4ed8"/>
+<polyline fill="none" stroke="#1d4ed8" stroke-width="2.5" points="90,510.678 1390,510.678"/>
+<circle cx="90.000" cy="510.678" r="4" fill="#1d4ed8"/>
+<circle cx="1390.000" cy="510.678" r="4" fill="#1d4ed8"/>
 <line x1="1400.000" y1="490.000" x2="1450.000" y2="490.000" stroke="#1d4ed8" stroke-width="3"/>
 <text x="1460.000" y="494.000" font-size="11" font-family="sans-serif">Implementation 1 (Serial)</text>
-<polyline fill="none" stroke="#ea580c" stroke-width="2.5" points="90,576.358 577.5,690.033 1390,699.198"/>
-<circle cx="90.000" cy="576.358" r="4" fill="#ea580c"/>
-<circle cx="577.500" cy="690.033" r="4" fill="#ea580c"/>
-<circle cx="1390.000" cy="699.198" r="4" fill="#ea580c"/>
+<polyline fill="none" stroke="#ea580c" stroke-width="2.5" points="90,581.738 1390,677.733"/>
+<circle cx="90.000" cy="581.738" r="4" fill="#ea580c"/>
+<circle cx="1390.000" cy="677.733" r="4" fill="#ea580c"/>
 <line x1="1400.000" y1="508.000" x2="1450.000" y2="508.000" stroke="#ea580c" stroke-width="3"/>
 <text x="1460.000" y="512.000" font-size="11" font-family="sans-serif">Implementation 2 (MM-1D)</text>
-<polyline fill="none" stroke="#059669" stroke-width="2.5" points="90,502.273 577.5,693.069 1390,704.67"/>
+<polyline fill="none" stroke="#059669" stroke-width="2.5" points="90,502.273 1390,679.507"/>
 <circle cx="90.000" cy="502.273" r="4" fill="#059669"/>
-<circle cx="577.500" cy="693.069" r="4" fill="#059669"/>
-<circle cx="1390.000" cy="704.670" r="4" fill="#059669"/>
+<circle cx="1390.000" cy="679.507" r="4" fill="#059669"/>
 <line x1="1400.000" y1="526.000" x2="1450.000" y2="526.000" stroke="#059669" stroke-width="3"/>
 <text x="1460.000" y="530.000" font-size="11" font-family="sans-serif">Implementation 3 (MM-2D)</text>
 </g>
@@ -92,38 +82,33 @@
 <line x1="90.000" y1="1085.000" x2="1390.000" y2="1085.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
 <text x="80.000" y="1089.000" text-anchor="end" font-size="11" font-family="monospace">0.000</text>
 <line x1="90.000" y1="1036.000" x2="1390.000" y2="1036.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
-<text x="80.000" y="1040.000" text-anchor="end" font-size="11" font-family="monospace"00.001</text>
+<text x="80.000" y="1040.000" text-anchor="end" font-size="11" font-family="monospace">0.000</text>
 <line x1="90.000" y1="987.000" x2="1390.000" y2="987.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
-<text x="80.000" y="991.000" text-anchor="end" font-size="11" font-family="monospace">0.001</text>
+<text x="80.000" y="991.000" text-anchor="end" font-size="11" font-family="monospace">0.000</text>
 <line x1="90.000" y1="938.000" x2="1390.000" y2="938.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
-<text x="80.000" y="942.000" text-anchor="end" font-size="11" font-family="monospace">0.002</text>
+<text x="80.000" y="942.000" text-anchor="end" font-size="11" font-family="monospace">0.001</text>
 <line x1="90.000" y1="889.000" x2="1390.000" y2="889.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
-<text x="80.000" y="893.000" text-anchor="end" font-size="11" font-family="monospace">0.003</text>
+<text x="80.000" y="893.000" text-anchor="end" font-size="11" font-family="monospace">0.001</text>
 <line x1="90.000" y1="840.000" x2="1390.000" y2="840.000" stroke="#e2e8f0" stroke-dasharray="4,4"/>
-<text x="80.000" y="844.000" text-anchor="end" font-size="11" font-family="monospace">0.004</text>
+<text x="80.000" y="844.000" text-anchor="end" font-size="11" font-family="monospace">0.001</text>
 <line x1="90.000" y1="840.000" x2="90.000" y2="1085.000" stroke="#f1f5f9"/>
 <text x="90.000" y="1105.000" text-anchor="middle" font-size="11" font-family="monospace">1</text>
-<line x1="577.500" y1="840.000" x2="577.500" y2="1085.000" stroke="#f1f5f9"/>
-<text x="577.500" y="1105.000" text-anchor="middle" font-size="11" font-family="monospace">4</text>
 <line x1="1390.000" y1="840.000" x2="1390.000" y2="1085.000" stroke="#f1f5f9"/>
-<text x="1390.000" y="1105.000" text-anchor="middle" font-size="11" font-family="monospace">9</text>
+<text x="1390.000" y="1105.000" text-anchor="middle" font-size="11" font-family="monospace">4</text>
 <text x="740.000" y="1130.000" text-anchor="middle" font-size="12" font-family="sans-serif">P (threads / processors)</text>
 <text x="38.000" y="962.500" transform="rotate(-90 30.000 962.500)" text-anchor="middle" font-size="12" font-family="sans-serif">Cost</text>
-<polyline fill="none" stroke="#1d4ed8" stroke-width="2.5" points="90,1077.42 577.5,1080.06 1390,1079.65"/>
-<circle cx="90.000" cy="1077.423" r="4" fill="#1d4ed8"/>
-<circle cx="577.500" cy="1080.064" r="4" fill="#1d4ed8"/>
-<circle cx="1390.000" cy="1079.647" r="4" fill="#1d4ed8"/>
+<polyline fill="none" stroke="#1d4ed8" stroke-width="2.5" points="90,1071.08 1390,1073.18"/>
+<circle cx="90.000" cy="1071.080" r="4" fill="#1d4ed8"/>
+<circle cx="1390.000" cy="1073.181" r="4" fill="#1d4ed8"/>
 <line x1="1400.000" y1="850.000" x2="1450.000" y2="850.000" stroke="#1d4ed8" stroke-width="3"/>
 <text x="1460.000" y="854.000" font-size="11" font-family="sans-serif">Implementation 1 (Serial)</text>
-<polyline fill="none" stroke="#ea580c" stroke-width="2.5" points="90,1080.21 577.5,1031.93 1390,909.505"/>
-<circle cx="90.000" cy="1080.208" r="4" fill="#ea580c"/>
-<circle cx="577.500" cy="1031.930" r="4" fill="#ea580c"/>
-<circle cx="1390.000" cy="909.505" r="4" fill="#ea580c"/>
+<polyline fill="none" stroke="#ea580c" stroke-width="2.5" points="90,1064.17 1390,870.63"/>
+<circle cx="90.000" cy="1064.175" r="4" fill="#ea580c"/>
+<circle cx="1390.000" cy="870.630" r="4" fill="#ea580c"/>
 <line x1="1400.000" y1="868.000" x2="1450.000" y2="868.000" stroke="#ea580c" stroke-width="3"/>
 <text x="1460.000" y="872.000" font-size="11" font-family="sans-serif">Implementation 2 (MM-1D)</text>
-<polyline fill="none" stroke="#059669" stroke-width="2.5" points="90,1081.8 577.5,1026.89 1390,862.273"/>
-<circle cx="90.000" cy="1081.802" r="4" fill="#059669"/>
-<circle cx="577.500" cy="1026.885" r="4" fill="#059669"/>
+<polyline fill="none" stroke="#059669" stroke-width="2.5" points="90,1071.6 1390,862.273"/>
+<circle cx="90.000" cy="1071.605" r="4" fill="#059669"/>
 <circle cx="1390.000" cy="862.273" r="4" fill="#059669"/>
 <line x1="1400.000" y1="886.000" x2="1450.000" y2="886.000" stroke="#059669" stroke-width="3"/>
 <text x="1460.000" y="890.000" font-size="11" font-family="sans-serif">Implementation 3 (MM-2D)</text>

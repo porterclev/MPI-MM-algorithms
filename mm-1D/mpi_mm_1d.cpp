@@ -143,7 +143,7 @@ int main(int argc, char* argv[]) {
         cout << "Local Matrix Multiplication Compute Time: " << (end - start) << " seconds\n";
         cout << "Total Runtime: " << total_time << " seconds\n";
         if (!correct) {
-            exit_code = 1;
+		return 1;
         }
     } else {
         MPI_Send(C_local.data(), local_rows * q, MPI_DOUBLE, 0, 4, MPI_COMM_WORLD);
