@@ -248,11 +248,7 @@ int main(int argc, char **argv) {
         auto parallel_end = std::chrono::high_resolution_clock::now();
         double parallel_time = std::chrono::duration<double>(parallel_end - parallel_start).count();
 
-        auto serial_start = std::chrono::high_resolution_clock::now();
         serial_mm(A, B, C_serial, m, n, q);
-        auto serial_end = std::chrono::high_resolution_clock::now();
-        double serial_time = std::chrono::duration<double>(serial_end - serial_start).count();
-
         bool correct = almost_equal(C, C_serial);
 
         cout << "MM-2D completed" << endl;
@@ -274,6 +270,9 @@ int main(int argc, char **argv) {
         //     print_matrix(C, m, q, "C_parallel");
         //     print_matrix(C_serial, m, q, "C_serial");
         // }
+        if(!correct){
+            return 1;
+        }
     }
 
     MPI_Finalize();

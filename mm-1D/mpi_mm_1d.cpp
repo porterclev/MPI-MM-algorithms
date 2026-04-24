@@ -1,4 +1,5 @@
 #include <mpi.h>
+#include <cmath>
 #include <iostream>
 #include <cstdlib>
 #include <vector>
@@ -22,6 +23,31 @@ vector<double> make_matrix(int rows, int cols, int salt) {
         for (int j = 0; j < cols; j++)
             M[i * cols + j] = (i + j + salt) % 10;
     return M;
+}
+
+void serial_mm(const vector<double>& A, const vector<double>& B, vector<double>& C,
+               int m, int n, int q) {
+    fill(C.begin(), C.end(), 0.0);
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < q; j++) {
+            double sum = 0.0;
+            for (int k = 0; k < n; k++)
+                sum += A[i * n + k] * B[k * q + j];
+            C[i * q + j] = sum;
+        }
+    }
+}
+
+bool almost_equal(const vector<double>& X, const vector<double>& Y, double eps = 1e-9) {
+    if (X.size() != Y.size()) {
+        return false;
+    }
+    for (size_t i = 0; i < X.size(); i++) {
+        if (fabs(X[i] - Y[i]) > eps) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void local_mm(const vector<double>& A, const vector<double>& B, vector<double>& C,
@@ -66,12 +92,13 @@ int main(int argc, char* argv[]) {
     vector<double> A_local(local_rows * n);
     vector<double> B(n * q);
     vector<double> C_local(local_rows * q, 0.0);
-    vector<double> A, C;
+    vector<double> A, C, C_serial;
 
     if (rank == 0) {
         A = make_matrix(m, n, 1);
         B = make_matrix(n, q, 2);
         C.resize(m * q);
+        C_serial.resize(m * q);
 
         for (int p = 1; p < size; p++) {
             Range pr = block_rows(p, size, m);
@@ -108,8 +135,16 @@ int main(int argc, char* argv[]) {
 
         double total_end = MPI_Wtime();
         double total_time = total_end - total_start;
+
+        serial_mm(A, B, C_serial, m, n, q);
+
+        bool correct = almost_equal(C, C_serial);
+
         cout << "Local Matrix Multiplication Compute Time: " << (end - start) << " seconds\n";
         cout << "Total Runtime: " << total_time << " seconds\n";
+        if (!correct) {
+            exit_code = 1;
+        }
     } else {
         MPI_Send(C_local.data(), local_rows * q, MPI_DOUBLE, 0, 4, MPI_COMM_WORLD);
     }
