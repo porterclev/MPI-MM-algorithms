@@ -16,11 +16,11 @@ if __name__ == "__main__":
     subprocess.run(["bash", str(BUILD_SCRIPT)], check=True)
     print("=============Finished Building=============")
 
-    scaler = 6
+    scaler = 600
     M = list(range(1 * scaler, 5 * scaler, 1 * scaler))
     N = list(range(1 * scaler, 5 * scaler, 1 * scaler))
     Q = list(range(1 * scaler, 5 * scaler, 1 * scaler))
-    P = "1,4"
+    P = "1,4,9,16,25"
     MAX_P = max(int(x) for x in P.split(","))
 
     for m in M:
