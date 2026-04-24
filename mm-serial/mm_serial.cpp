@@ -1,36 +1,33 @@
 #include <iostream>
-#include <vector>
 #include <chrono>
+#include <random>
+#include <vector>
 
 using namespace std;
+
+vector<double> make_matrix(int rows, int cols, int salt) {
+    vector<double> M(rows * cols);
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+            M[i * cols + j] = (i + j + salt) % 10;
+    return M;
+}
 
 int main(int argc, char *argv[]) {
     int m = std::stoi(argv[1]);
     int n = std::stoi(argv[2]);
     int q = std::stoi(argv[3]);
-    
-    vector<vector<double>> A(m, vector<double>(n));
-    vector<vector<double>> B(n, vector<double>(q));
-    vector<vector<double>> C(m, vector<double>(q, 0));
 
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            A[i][j] = 1.0;
-        }
-    }
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < q; j++) {
-            B[i][j] = 1.0;
-        }
-    }
+    vector<double> A = make_matrix(m, n, 1);
+    vector<double> B = make_matrix(n, q, 2);
+    vector<double> C(m * q, 0.0);
 
     auto start = chrono::high_resolution_clock::now();
 
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < q; j++) {
             for (int k = 0; k < n; k++) {
-                C[i][j] += A[i][k] * B[k][j];
+                C[i * q + j] += A[i * n + k] * B[k * q + j];
             }
         }
     }
