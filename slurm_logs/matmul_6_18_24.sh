@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --job-name=matmul_6_18_24
+#SBATCH --partition=compute
+#SBATCH --nodes=1
+#SBATCH --ntasks=9
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=4G
+#SBATCH --time=00:10:00
+#SBATCH --output=/home/pbclevidence/MPI-MM-algorithms/slurm_logs/matmul_6_18_24_%j.out
+
+module load openmpi/3.1.6
+export PATH=/apps/openmpi3/bin:$PATH
+export LD_LIBRARY_PATH=/apps/openmpi3/lib:$LD_LIBRARY_PATH
+cd /home/pbclevidence/MPI-MM-algorithms
+
+srun /home/pbclevidence/MPI-MM-algorithms/bin/group_assignment 6 18 24 --p=1,4,9 --csv=/home/pbclevidence/MPI-MM-algorithms/csvs/M6_N18_Q24.csv --svg=/home/pbclevidence/MPI-MM-algorithms/graphs/M6_N18_Q24.svg

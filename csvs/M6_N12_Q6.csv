@@ -1,0 +1,10 @@
+implementation,m,n,q,p,seconds,speedup,cost,exit_code,status,command,raw_output
+"Implementation 1 (Serial)",6,12,6,1,0.000014,1.000000,0.000014,0,"ok","./bin/mm_serial 6 12 6","Time: 0.000014 seconds"
+"Implementation 2 (MM-1D)",6,12,6,1,0.000016,0.862345,0.000016,0,"ok","mpirun -np 1 ./bin/mm_1d 6 12 6","Local Matrix Multiplication Compute Time: 3.45893e-06 seconds Total Runtime: 1.62348e-05 seconds"
+"Implementation 3 (MM-2D)",6,12,6,1,0.000010,1.400000,0.000010,0,"ok","mpirun -np 1 ./bin/mm_2d 6 12 6","MM-2D completed Processes (P): 1 Grid size    : 1 x 1 Matrix sizes : A(6x12), B(12x6), C(6x6) Parallel Time: 0.000010 seconds"
+"Implementation 1 (Serial)",6,12,6,4,0.000010,1.000000,0.000010,0,"ok","./bin/mm_serial 6 12 6","Time: 0.000010 seconds"
+"Implementation 2 (MM-1D)",6,12,6,4,0.000161,0.062187,0.000643,0,"ok","mpirun -np 4 ./bin/mm_1d 6 12 6","Local Matrix Multiplication Compute Time: 1.67266e-06 seconds Total Runtime: 0.000160805 seconds"
+"Implementation 3 (MM-2D)",6,12,6,4,0.000159,0.062893,0.000636,0,"ok","mpirun -np 4 ./bin/mm_2d 6 12 6","MM-2D completed Processes (P): 4 Grid size    : 2 x 2 Matrix sizes : A(6x12), B(12x6), C(6x6) Parallel Time: 0.000159 seconds"
+"Implementation 1 (Serial)",6,12,6,9,0.000008,1.000000,0.000008,0,"ok","./bin/mm_serial 6 12 6","Time: 0.000008 seconds"
+"Implementation 2 (MM-1D)",6,12,6,9,0.000248,0.032267,0.002231,0,"ok","mpirun -np 9 ./bin/mm_1d 6 12 6","Local Matrix Multiplication Compute Time: 9.6485e-07 seconds Total Runtime: 0.000247934 seconds"
+"Implementation 3 (MM-2D)",6,12,6,9,0.000226,0.035398,0.002034,0,"ok","mpirun -np 9 ./bin/mm_2d 6 12 6","MM-2D completed Processes (P): 9 Grid size    : 3 x 3 Matrix sizes : A(6x12), B(12x6), C(6x6) Parallel Time: 0.000226 seconds"

@@ -1,0 +1,163 @@
+/var/spool/slurm/slurmd/job17893/slurm_script: line 11: module: command not found
+Running P= 1... done
+Running P= 1... done
+Running P= 1... done
+Running P= 1... done
+Running P= 1... done
+Running P= 1... done
+Running P= 1... done
+Running P= 1... done
+Running P= 1... done
+Running P= 4... done
+Running P= 4... done
+Running P= 4... done
+Running P= 4... done
+Running P= 4... done
+Running P= 4... done
+Running P= 4... done
+Running P= 4... done
+Running P= 4... done
+Running P= 9... done
+
+Implementation              P     Seconds       Speedup       Cost          Status
+--------------------------------------------------------------------------------------
+Implementation 1 (Serial)   1     0.000018      1.000000      0.000018      ok
+Implementation 2 (MM-1D)    1     0.000026      0.681284      0.000026      ok
+Implementation 3 (MM-2D)    1     0.000017      1.058824      0.000017      ok
+Implementation 1 (Serial)   4     0.000017      1.000000      0.000017      ok
+Implementation 2 (MM-1D)    4     0.000159      0.106602      0.000638      ok
+Implementation 3 (MM-2D)    4     0.000149      0.114094      0.000596      ok
+Implementation 1 (Serial)   9     0.000016      1.000000      0.000016      ok
+Implementation 2 (MM-1D)    9     0.000267      0.059959      0.002402      ok
+Implementation 3 (MM-2D)    9     0.000301      0.053156      0.002709      ok
+
+CSV written to: /home/pbclevidence/MPI-MM-algorithms/csvs/M6_N6_Q24.csv
+SVG graph written to: /home/pbclevidence/MPI-MM-algorithms/graphs/M6_N6_Q24.svg
+Running P= 9... done
+Running P= 9... done
+
+Implementation              P     Seconds       Speedup       Cost          Status
+--------------------------------------------------------------------------------------
+Implementation 1 (Serial)   1     0.000018      1.000000      0.000018      ok
+Implementation 2 (MM-1D)    1     0.000026      0.696481      0.000026      ok
+Implementation 3 (MM-2D)    1     0.000015      1.200000      0.000015      ok
+Implementation 1 (Serial)   4     0.000018      1.000000      0.000018      ok
+Implementation 2 (MM-1D)    4     0.000171      0.105370      0.000683      ok
+Implementation 3 (MM-2D)    4     0.000156      0.115385      0.000624      ok
+Implementation 1 (Serial)   9     0.000016      1.000000      0.000016      ok
+Implementation 2 (MM-1D)    9     0.000266      0.060071      0.002397      ok
+Implementation 3 (MM-2D)    9     0.000310      0.051613      0.002790      ok
+
+CSV written to: /home/pbclevidence/MPI-MM-algorithms/csvs/M6_N6_Q24.csv
+SVG graph written to: /home/pbclevidence/MPI-MM-algorithms/graphs/M6_N6_Q24.svg
+
+Implementation              P     Seconds       Speedup       Cost          Status
+--------------------------------------------------------------------------------------
+Implementation 1 (Serial)   1     0.000026      1.000000      0.000026      ok
+Implementation 2 (MM-1D)    1     0.000022      1.205825      0.000022      ok
+Implementation 3 (MM-2D)    1     0.000017      1.529412      0.000017      ok
+Implementation 1 (Serial)   4     0.000015      1.000000      0.000015      ok
+Implementation 2 (MM-1D)    4     0.000170      0.088326      0.000679      ok
+Implementation 3 (MM-2D)    4     0.000166      0.090361      0.000664      ok
+Implementation 1 (Serial)   9     0.000015      1.000000      0.000015      ok
+Implementation 2 (MM-1D)    9     0.000272      0.055166      0.002447      ok
+Implementation 3 (MM-2D)    9     0.000297      0.050505      0.002673      ok
+
+CSV written to: /home/pbclevidence/MPI-MM-algorithms/csvs/M6_N6_Q24.csv
+SVG graph written to: /home/pbclevidence/MPI-MM-algorithms/graphs/M6_N6_Q24.svg
+Running P= 9... done
+
+Implementation              P     Seconds       Speedup       Cost          Status
+--------------------------------------------------------------------------------------
+Implementation 1 (Serial)   1     0.000018      1.000000      0.000018      ok
+Implementation 2 (MM-1D)    1     0.000026      0.701486      0.000026      ok
+Implementation 3 (MM-2D)    1     0.000016      1.125000      0.000016      ok
+Implementation 1 (Serial)   4     0.000015      1.000000      0.000015      ok
+Implementation 2 (MM-1D)    4     0.000165      0.090878      0.000660      ok
+Implementation 3 (MM-2D)    4     0.000168      0.089286      0.000672      ok
+Implementation 1 (Serial)   9     0.000018      1.000000      0.000018      ok
+Implementation 2 (MM-1D)    9     0.000260      0.069188      0.002341      ok
+Implementation 3 (MM-2D)    9     0.000305      0.059016      0.002745      ok
+
+CSV written to: /home/pbclevidence/MPI-MM-algorithms/csvs/M6_N6_Q24.csv
+SVG graph written to: /home/pbclevidence/MPI-MM-algorithms/graphs/M6_N6_Q24.svg
+Running P= 9... done
+Running P= 9... done
+
+Implementation              P     Seconds       Speedup       Cost          Status
+--------------------------------------------------------------------------------------
+Implementation 1 (Serial)   1     0.000026      1.000000      0.000026      ok
+Implementation 2 (MM-1D)    1     0.000026      0.989941      0.000026      ok
+Implementation 3 (MM-2D)    1     0.000013      2.000000      0.000013      ok
+Implementation 1 (Serial)   4     0.000016      1.000000      0.000016      ok
+Implementation 2 (MM-1D)    4     0.000163      0.098411      0.000650      ok
+Implementation 3 (MM-2D)    4     0.000166      0.096386      0.000664      ok
+Implementation 1 (Serial)   9     0.000017      1.000000      0.000017      ok
+Implementation 2 (MM-1D)    9     0.000272      0.062386      0.002452      ok
+Implementation 3 (MM-2D)    9     0.000308      0.055195      0.002772      ok
+
+CSV written to: /home/pbclevidence/MPI-MM-algorithms/csvs/M6_N6_Q24.csv
+SVG graph written to: /home/pbclevidence/MPI-MM-algorithms/graphs/M6_N6_Q24.svg
+Running P= 9... done
+
+Implementation              P     Seconds       Speedup       Cost          Status
+--------------------------------------------------------------------------------------
+Implementation 1 (Serial)   1     0.000026      1.000000      0.000026      ok
+Implementation 2 (MM-1D)    1     0.000022      1.206609      0.000022      ok
+Implementation 3 (MM-2D)    1     0.000016      1.625000      0.000016      ok
+Implementation 1 (Serial)   4     0.000017      1.000000      0.000017      ok
+Implementation 2 (MM-1D)    4     0.000186      0.091642      0.000742      ok
+Implementation 3 (MM-2D)    4     0.000157      0.108280      0.000628      ok
+Implementation 1 (Serial)   9     0.000015      1.000000      0.000015      ok
+Implementation 2 (MM-1D)    9     0.000257      0.058469      0.002309      ok
+Implementation 3 (MM-2D)    9     0.000289      0.051903      0.002601      ok
+
+CSV written to: /home/pbclevidence/MPI-MM-algorithms/csvs/M6_N6_Q24.csv
+SVG graph written to: /home/pbclevidence/MPI-MM-algorithms/graphs/M6_N6_Q24.svg
+
+Implementation              P     Seconds       Speedup       Cost          Status
+--------------------------------------------------------------------------------------
+Implementation 1 (Serial)   1     0.000026      1.000000      0.000026      ok
+Implementation 2 (MM-1D)    1     0.000020      1.328191      0.000020      ok
+Implementation 3 (MM-2D)    1     0.000017      1.529412      0.000017      ok
+Implementation 1 (Serial)   4     0.000018      1.000000      0.000018      ok
+Implementation 2 (MM-1D)    4     0.000174      0.103637      0.000695      ok
+Implementation 3 (MM-2D)    4     0.000156      0.115385      0.000624      ok
+Implementation 1 (Serial)   9     0.000017      1.000000      0.000017      ok
+Implementation 2 (MM-1D)    9     0.000263      0.064669      0.002366      ok
+Implementation 3 (MM-2D)    9     0.000297      0.057239      0.002673      ok
+
+CSV written to: /home/pbclevidence/MPI-MM-algorithms/csvs/M6_N6_Q24.csv
+SVG graph written to: /home/pbclevidence/MPI-MM-algorithms/graphs/M6_N6_Q24.svg
+Running P= 9... done
+
+Implementation              P     Seconds       Speedup       Cost          Status
+--------------------------------------------------------------------------------------
+Implementation 1 (Serial)   1     0.000018      1.000000      0.000018      ok
+Implementation 2 (MM-1D)    1     0.000020      0.884751      0.000020      ok
+Implementation 3 (MM-2D)    1     0.000017      1.058824      0.000017      ok
+Implementation 1 (Serial)   4     0.000016      1.000000      0.000016      ok
+Implementation 2 (MM-1D)    4     0.000188      0.084912      0.000754      ok
+Implementation 3 (MM-2D)    4     0.000154      0.103896      0.000616      ok
+Implementation 1 (Serial)   9     0.000016      1.000000      0.000016      ok
+Implementation 2 (MM-1D)    9     0.000274      0.058399      0.002466      ok
+Implementation 3 (MM-2D)    9     0.000296      0.054054      0.002664      ok
+
+CSV written to: /home/pbclevidence/MPI-MM-algorithms/csvs/M6_N6_Q24.csv
+SVG graph written to: /home/pbclevidence/MPI-MM-algorithms/graphs/M6_N6_Q24.svg
+Running P= 9... done
+
+Implementation              P     Seconds       Speedup       Cost          Status
+--------------------------------------------------------------------------------------
+Implementation 1 (Serial)   1     0.000026      1.000000      0.000026      ok
+Implementation 2 (MM-1D)    1     0.000027      0.972763      0.000027      ok
+Implementation 3 (MM-2D)    1     0.000013      2.000000      0.000013      ok
+Implementation 1 (Serial)   4     0.000017      1.000000      0.000017      ok
+Implementation 2 (MM-1D)    4     0.000171      0.099276      0.000685      ok
+Implementation 3 (MM-2D)    4     0.000154      0.110390      0.000616      ok
+Implementation 1 (Serial)   9     0.000016      1.000000      0.000016      ok
+Implementation 2 (MM-1D)    9     0.000269      0.059417      0.002424      ok
+Implementation 3 (MM-2D)    9     0.000297      0.053872      0.002673      ok
+
+CSV written to: /home/pbclevidence/MPI-MM-algorithms/csvs/M6_N6_Q24.csv
+SVG graph written to: /home/pbclevidence/MPI-MM-algorithms/graphs/M6_N6_Q24.svg
