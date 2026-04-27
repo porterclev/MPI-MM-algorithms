@@ -8,7 +8,6 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <chrono>
 
 using std::cerr;
 using std::cout;
@@ -25,11 +24,11 @@ static inline double elem_const(const vector<double> &M, int cols, int r, int c)
     return M[r * cols + c];
 }
 
-vector<double> make_matrix(int rows, int cols) {
+vector<double> make_matrix(int rows, int cols, int salt) {
     vector<double> M(rows * cols);
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            M[i * cols + j] = static_cast<double>(((i + 1) * (j + 2)) % 7 + 1);
+            M[i * cols + j] = static_cast<double>((i + j + salt) % 10);
         }
     }
     return M;
@@ -169,84 +168,98 @@ int main(int argc, char **argv) {
     vector<double> C;
     vector<double> C_serial;
 
+    const int a_block_elems = block_rows_A * block_cols_A;
+    const int b_block_elems = block_rows_B * block_cols_B;
+    const int c_block_elems = block_rows_C * block_cols_C;
+
+    vector<double> localA(a_block_elems, 0.0);
+    vector<double> localB(b_block_elems, 0.0);
+    vector<double> localC(c_block_elems, 0.0);
+
+    MPI_Comm row_comm;
+    MPI_Comm col_comm;
+    MPI_Comm_split(MPI_COMM_WORLD, proc_row, proc_col, &row_comm);
+    MPI_Comm_split(MPI_COMM_WORLD, proc_col, proc_row, &col_comm);
+
     if (rank == 0) {
-        A = make_matrix(m, n);
-        B = make_matrix(n, q);
+        A = make_matrix(m, n, 1);
+        B = make_matrix(n, q, 2);
         C.assign(m * q, 0.0);
         C_serial.assign(m * q, 0.0);
     }
 
-    vector<double> localC(block_rows_C * block_cols_C, 0.0);
-
-    std::chrono::high_resolution_clock::time_point parallel_start;
-    if (rank == 0) {
-        parallel_start = std::chrono::high_resolution_clock::now();
-    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    const double parallel_start = MPI_Wtime();
 
     if (rank == 0) {
         for (int dest = 0; dest < size; ++dest) {
-            int dest_row = dest / sqrtP;
-            int dest_col = dest % sqrtP;
+            const int dest_row = dest / sqrtP;
+            const int dest_col = dest % sqrtP;
+            vector<double> Ablock = extract_block(
+                A, n,
+                dest_row * block_rows_A, block_rows_A,
+                dest_col * block_cols_A, block_cols_A);
+            vector<double> Bblock = extract_block(
+                B, q,
+                dest_row * block_rows_B, block_rows_B,
+                dest_col * block_cols_B, block_cols_B);
 
-            for (int blk = 0; blk < sqrtP; ++blk) {
-                vector<double> Ablock = extract_block(
-                    A, n,
-                    dest_row * block_rows_A, block_rows_A,
-                    blk * block_cols_A, block_cols_A);
-
-                vector<double> Bblock = extract_block(
-                    B, q,
-                    blk * block_rows_B, block_rows_B,
-                    dest_col * block_cols_B, block_cols_B);
-
-                if (dest == 0) {
-                    local_block_multiply_add(Ablock, Bblock, localC,
-                                             block_rows_A, block_cols_A, block_cols_B);
-                } else {
-                    MPI_Send(Ablock.data(), static_cast<int>(Ablock.size()), MPI_DOUBLE,
-                             dest, 100 + blk, MPI_COMM_WORLD);
-                    MPI_Send(Bblock.data(), static_cast<int>(Bblock.size()), MPI_DOUBLE,
-                             dest, 200 + blk, MPI_COMM_WORLD);
-                }
+            if (dest == 0) {
+                localA = Ablock;
+                localB = Bblock;
+            } else {
+                MPI_Send(Ablock.data(), static_cast<int>(Ablock.size()), MPI_DOUBLE,
+                         dest, 100, MPI_COMM_WORLD);
+                MPI_Send(Bblock.data(), static_cast<int>(Bblock.size()), MPI_DOUBLE,
+                         dest, 200, MPI_COMM_WORLD);
             }
         }
+    } else {
+        MPI_Recv(localA.data(), a_block_elems, MPI_DOUBLE, 0, 100, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(localB.data(), b_block_elems, MPI_DOUBLE, 0, 200, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    }
 
+    vector<double> a_panel(a_block_elems, 0.0);
+    vector<double> b_panel(b_block_elems, 0.0);
+
+    for (int blk = 0; blk < sqrtP; ++blk) {
+        if (proc_col == blk) {
+            a_panel = localA;
+        }
+        MPI_Bcast(a_panel.data(), a_block_elems, MPI_DOUBLE, blk, row_comm);
+
+        if (proc_row == blk) {
+            b_panel = localB;
+        }
+        MPI_Bcast(b_panel.data(), b_block_elems, MPI_DOUBLE, blk, col_comm);
+
+        local_block_multiply_add(a_panel, b_panel, localC,
+                                 block_rows_A, block_cols_A, block_cols_B);
+    }
+
+    if (rank == 0) {
         place_block(C, q, localC,
                     proc_row * block_rows_C, block_rows_C,
                     proc_col * block_cols_C, block_cols_C);
 
         for (int src = 1; src < size; ++src) {
-            vector<double> recvC(block_rows_C * block_cols_C, 0.0);
+            vector<double> recvC(c_block_elems, 0.0);
             MPI_Recv(recvC.data(), static_cast<int>(recvC.size()), MPI_DOUBLE,
                      src, 300, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-            int src_row = src / sqrtP;
-            int src_col = src % sqrtP;
+            const int src_row = src / sqrtP;
+            const int src_col = src % sqrtP;
             place_block(C, q, recvC,
                         src_row * block_rows_C, block_rows_C,
                         src_col * block_cols_C, block_cols_C);
         }
     } else {
-        for (int blk = 0; blk < sqrtP; ++blk) {
-            vector<double> Ablock(block_rows_A * block_cols_A, 0.0);
-            vector<double> Bblock(block_rows_B * block_cols_B, 0.0);
-
-            MPI_Recv(Ablock.data(), static_cast<int>(Ablock.size()), MPI_DOUBLE,
-                     0, 100 + blk, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            MPI_Recv(Bblock.data(), static_cast<int>(Bblock.size()), MPI_DOUBLE,
-                     0, 200 + blk, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
-            local_block_multiply_add(Ablock, Bblock, localC,
-                                     block_rows_A, block_cols_A, block_cols_B);
-        }
-
-        MPI_Send(localC.data(), static_cast<int>(localC.size()), MPI_DOUBLE,
-                 0, 300, MPI_COMM_WORLD);
+        MPI_Send(localC.data(), c_block_elems, MPI_DOUBLE, 0, 300, MPI_COMM_WORLD);
     }
 
     if (rank == 0) {
-        auto parallel_end = std::chrono::high_resolution_clock::now();
-        double parallel_time = std::chrono::duration<double>(parallel_end - parallel_start).count();
+        const double parallel_end = MPI_Wtime();
+        const double parallel_time = parallel_end - parallel_start;
 
         serial_mm(A, B, C_serial, m, n, q);
         bool correct = almost_equal(C, C_serial);
@@ -271,10 +284,14 @@ int main(int argc, char **argv) {
         //     print_matrix(C_serial, m, q, "C_serial");
         // }
         if(!correct){
+            MPI_Comm_free(&row_comm);
+            MPI_Comm_free(&col_comm);
             return 1;
         }
     }
 
+    MPI_Comm_free(&row_comm);
+    MPI_Comm_free(&col_comm);
     MPI_Finalize();
     return 0;
 }

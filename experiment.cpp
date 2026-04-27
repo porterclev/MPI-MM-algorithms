@@ -12,7 +12,6 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <omp.h>
 
 namespace {
 
@@ -464,8 +463,7 @@ CommandResult run_implementation(const ImplementationInfo& implementation, int m
 
 int main(int argc, char* argv[]){
     try {
-        omp_set_num_threads(4);
-        int TRIALS = 1;
+        const int trials = 1;
         const Config config = parse_args(argc, argv);
 
         int M = config.m;
@@ -480,43 +478,25 @@ int main(int argc, char* argv[]){
         };
 
         std::vector<BenchmarkRow> rows;
+        CommandResult serial_peak;
+        for(int test = 0; test < trials; ++test){
+            CommandResult res = run_implementation(implementations[0], M, N, Q, 1);
+            if(test == 0 || res.seconds < serial_peak.seconds){
+                serial_peak = res;
+            }
+        }
+        const CommandResult serial_result = serial_peak;
+        const bool serial_ok = serial_result.exit_code == 0 && !std::isnan(serial_result.seconds);
 
         for(int p : P){
             std::cout << "Running P= " << p << "..." << std::flush;
-            // CommandResult serial_peak;
-            // for(int test = 0; test < TRIALS; test++){
-            //     CommandResult res = run_implementation(implementations[0], M, N, Q, p);
-            //     if(test == 0) serial_peak = res;
-            //     if(res.seconds < serial_peak.seconds){
-            //         serial_peak = res;
-            //     }
-            // }
-            std::vector<CommandResult> results(TRIALS);
-            #pragma omp parallel for schedule(dynamic)
-            for (int test = 0; test < TRIALS; test++) {
-                results[test] = run_implementation(implementations[0], M, N, Q, p);
-            }
-
-            // Serial reduction (accurate selection)
-            CommandResult serial_peak = results[0];
-            for (const auto& r : results) {
-                if (r.seconds < serial_peak.seconds) {
-                    serial_peak = r;
-                }
-            }
-
-            const CommandResult serial_result = serial_peak;
-            const bool serial_ok = serial_result.exit_code == 0 && !std::isnan(serial_result.seconds);
             rows.push_back(make_benchmark_row(implementations[0], serial_result, M, N, Q, p, serial_result.seconds, serial_ok));
 
             for(std::size_t i = 1; i < implementations.size(); ++i){
-                // std::cout << implementations[i].heading << std::endl;
-                
                 CommandResult peak;
-                for(int test = 0; test < TRIALS; test++){
+                for(int test = 0; test < trials; ++test){
                     CommandResult res = run_implementation(implementations[i], M, N, Q, p);
-                    if(test == 0) peak = res;
-                    if(res.seconds < peak.seconds){
+                    if(test == 0 || res.seconds < peak.seconds){
                         peak = res;
                     }
                 }
