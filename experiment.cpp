@@ -42,6 +42,7 @@ struct BenchmarkRow {
     int p = 0;
     double seconds = std::numeric_limits<double>::quiet_NaN();
     double speedup = std::numeric_limits<double>::quiet_NaN();
+    double serial_speedup = std::numeric_limits<double>::quiet_NaN();
     double cost = std::numeric_limits<double>::quiet_NaN();
     int exit_code = -1;
     std::string status;
@@ -226,7 +227,7 @@ void write_csv(const std::string& path, const std::vector<BenchmarkRow>& rows){
     if(!out) throw std::runtime_error("failed to open CSV output: " + path);
     
 
-    out << "implementation,m,n,q,p,seconds,speedup,cost,exit_code,status,command,raw_output\n";
+    out << "implementation,m,n,q,p,seconds,speedup,serial_speedup,cost,exit_code,status,command,raw_output\n";
     for(const BenchmarkRow& row : rows){
         out << csv_escape(row.implementation) << ','
             << row.m << ','
@@ -235,6 +236,7 @@ void write_csv(const std::string& path, const std::vector<BenchmarkRow>& rows){
             << row.p << ','
             << format_metric(row.seconds) << ','
             << format_metric(row.speedup) << ','
+            << format_metric(row.serial_speedup) << ','
             << format_metric(row.cost) << ','
             << row.exit_code << ','
             << csv_escape(row.status) << ','
@@ -384,7 +386,7 @@ void write_svg(const std::string& path, const std::vector<BenchmarkRow>& rows, c
 
 
     write_plot_panel(out, rows, config.p_values, "Runtime by P", false, false, 20.0, 90.0, width - right_magin, 320.0);
-    write_plot_panel(out, rows, config.p_values, "Speedup vs Serial", true, false, 20.0, 90.0 + h_spacing, width - right_magin, 320.0);
+    write_plot_panel(out, rows, config.p_values, "Speedup vs P=1", true, false, 20.0, 90.0 + h_spacing, width - right_magin, 320.0);
     write_plot_panel(out, rows, config.p_values, "Cost vs Serial", false, true, 20.0, 90.0 + h_spacing * 2, width - right_magin, 320.0);
 
     out << "</svg>\n";
@@ -397,9 +399,10 @@ void print_table(const std::vector<BenchmarkRow>& rows){
               << std::setw(6) << "P"
               << std::setw(14) << "Seconds"
               << std::setw(14) << "Speedup"
+              << std::setw(14) << "VsSerial"
               << std::setw(14) << "Cost"
               << "Status\n";
-    std::cout << std::string(86, '-') << '\n';
+    std::cout << std::string(100, '-') << '\n';
 
     for(const BenchmarkRow& row : rows){
         std::cout << std::left
@@ -407,6 +410,7 @@ void print_table(const std::vector<BenchmarkRow>& rows){
                   << std::setw(6) << row.p
                   << std::setw(14) << format_metric(row.seconds)
                   << std::setw(14) << format_metric(row.speedup)
+                  << std::setw(14) << format_metric(row.serial_speedup)
                   << std::setw(14) << format_metric(row.cost)
                   << row.status << '\n';
     }
@@ -426,7 +430,18 @@ std::string build_command(const ImplementationInfo& implementation, int m, int n
     return command;
 }
 
-BenchmarkRow make_benchmark_row(const ImplementationInfo& implementation, const CommandResult& result, int m, int n, int q, int p, double serial_seconds, bool serial_ok){
+BenchmarkRow make_benchmark_row(
+    const ImplementationInfo& implementation,
+    const CommandResult& result,
+    int m,
+    int n,
+    int q,
+    int p,
+    double serial_seconds,
+    bool serial_ok,
+    double impl_p1_seconds,
+    bool impl_p1_ok
+){
     BenchmarkRow row;
     row.implementation = implementation.implementation_name;
     row.color = implementation.color;
@@ -443,11 +458,15 @@ BenchmarkRow make_benchmark_row(const ImplementationInfo& implementation, const 
     const bool row_ok = row.status == "ok";
     if(implementation.is_serial){
         row.speedup = row_ok ? 1.0 : std::numeric_limits<double>::quiet_NaN();
+        row.serial_speedup = row_ok ? 1.0 : std::numeric_limits<double>::quiet_NaN();
         row.cost = result.seconds;
         return row;
     }
 
-    row.speedup = (row_ok && serial_ok && result.seconds > 0.0)
+    row.speedup = (row_ok && impl_p1_ok && result.seconds > 0.0)
+        ? impl_p1_seconds / result.seconds
+        : std::numeric_limits<double>::quiet_NaN();
+    row.serial_speedup = (row_ok && serial_ok && result.seconds > 0.0)
         ? serial_seconds / result.seconds
         : std::numeric_limits<double>::quiet_NaN();
     row.cost = row_ok ? p * result.seconds : std::numeric_limits<double>::quiet_NaN();
@@ -463,7 +482,7 @@ CommandResult run_implementation(const ImplementationInfo& implementation, int m
 
 int main(int argc, char* argv[]){
     try {
-        const int trials = 1;
+        const int trials = 5;
         const Config config = parse_args(argc, argv);
 
         int M = config.m;
@@ -477,7 +496,6 @@ int main(int argc, char* argv[]){
             {"Implementation 3", "Implementation 3 (MM-2D)", "#059669", "./bin/mm_2d", true, false},
         };
 
-        std::vector<BenchmarkRow> rows;
         CommandResult serial_peak;
         for(int test = 0; test < trials; ++test){
             CommandResult res = run_implementation(implementations[0], M, N, Q, 1);
@@ -488,20 +506,64 @@ int main(int argc, char* argv[]){
         const CommandResult serial_result = serial_peak;
         const bool serial_ok = serial_result.exit_code == 0 && !std::isnan(serial_result.seconds);
 
+        std::vector<CommandResult> p1_results(implementations.size());
+        std::vector<bool> p1_ok(implementations.size(), false);
+        p1_results[0] = serial_result;
+        p1_ok[0] = serial_ok;
+
+        for(std::size_t i = 1; i < implementations.size(); ++i){
+            CommandResult peak;
+            for(int test = 0; test < trials; ++test){
+                CommandResult res = run_implementation(implementations[i], M, N, Q, 1);
+                if(test == 0 || res.seconds < peak.seconds){
+                    peak = res;
+                }
+            }
+            p1_results[i] = peak;
+            p1_ok[i] = peak.exit_code == 0 && !std::isnan(peak.seconds);
+        }
+
+        std::vector<BenchmarkRow> rows;
+
         for(int p : P){
             std::cout << "Running P= " << p << "..." << std::flush;
-            rows.push_back(make_benchmark_row(implementations[0], serial_result, M, N, Q, p, serial_result.seconds, serial_ok));
+            rows.push_back(make_benchmark_row(
+                implementations[0],
+                serial_result,
+                M,
+                N,
+                Q,
+                p,
+                serial_result.seconds,
+                serial_ok,
+                serial_result.seconds,
+                serial_ok
+            ));
 
             for(std::size_t i = 1; i < implementations.size(); ++i){
-                CommandResult peak;
-                for(int test = 0; test < trials; ++test){
-                    CommandResult res = run_implementation(implementations[i], M, N, Q, p);
-                    if(test == 0 || res.seconds < peak.seconds){
-                        peak = res;
+                CommandResult result = p1_results[i];
+                if(p != 1){
+                    CommandResult peak;
+                    for(int test = 0; test < trials; ++test){
+                        CommandResult res = run_implementation(implementations[i], M, N, Q, p);
+                        if(test == 0 || res.seconds < peak.seconds){
+                            peak = res;
+                        }
                     }
+                    result = peak;
                 }
-                const CommandResult result = peak;
-                rows.push_back(make_benchmark_row(implementations[i], result, M, N, Q, p, serial_result.seconds, serial_ok));
+                rows.push_back(make_benchmark_row(
+                    implementations[i],
+                    result,
+                    M,
+                    N,
+                    Q,
+                    p,
+                    serial_result.seconds,
+                    serial_ok,
+                    p1_results[i].seconds,
+                    p1_ok[i]
+                ));
             }
             std::cout << " done\n" << std::flush;
         }
