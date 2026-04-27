@@ -17,10 +17,10 @@ if __name__ == "__main__":
     print("=============Finished Building=============")
 
     scaler = 600
-    M = list(range(1 * scaler, 2 * scaler, 1 * scaler))
-    N = list(range(1 * scaler, 2 * scaler, 1 * scaler))
-    Q = list(range(1 * scaler, 2 * scaler, 1 * scaler))
-    P = "1,4"
+    M = list(range(1 * scaler, 6 * scaler, 1 * scaler))
+    N = list(range(1 * scaler, 6 * scaler, 1 * scaler))
+    Q = list(range(1 * scaler, 6 * scaler, 1 * scaler))
+    P = "1,4,9,16,25"
     MAX_P = max(int(x) for x in P.split(","))
 
     for m in M:
@@ -56,12 +56,6 @@ if __name__ == "__main__":
 		            "export LD_LIBRARY_PATH=/apps/openmpi3/lib:$LD_LIBRARY_PATH",
                     "cd " + str(SCRIPT_DIR),
                     "",
-		    "echo '=== mpirun path ==='",
-		    "which mpirun",
-    		    "echo '=== mpirun -np 4 test ==='",
-    		    "mpirun -np 4 hostname",
-    		    "echo '=== starting benchmark ==='",
-    		    "",
                     srun_line,
                 ]
 
