@@ -17,9 +17,9 @@ if __name__ == "__main__":
     print("=============Finished Building=============")
 
     scaler = 600
-    M = list(range(1 * scaler, 6 * scaler, 1 * scaler))
-    N = list(range(1 * scaler, 6 * scaler, 1 * scaler))
-    Q = list(range(1 * scaler, 6 * scaler, 1 * scaler))
+    M = list(range(1 * scaler, 3 * scaler, 1 * scaler))
+    N = list(range(1 * scaler, 3 * scaler, 1 * scaler))
+    Q = list(range(1 * scaler, 3 * scaler, 1 * scaler))
     P = "1,4,9,16,25"
     MAX_P = max(int(x) for x in P.split(","))
 
