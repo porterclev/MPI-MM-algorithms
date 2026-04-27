@@ -1,0 +1,26 @@
+=== mpirun path ===
+/apps/openmpi3/bin/mpirun
+=== mpirun -np 4 test ===
+cn24
+cn24
+cn24
+cn24
+=== starting benchmark ===
+Running P= 1... done
+Running P= 4... done
+Running P= 9... done
+
+Implementation              P     Seconds       Speedup       Cost          Status
+--------------------------------------------------------------------------------------
+Implementation 1 (Serial)   1     2.428637      1.000000      2.428637      ok
+Implementation 2 (MM-1D)    1     1.934330      1.255544      1.934330      ok
+Implementation 3 (MM-2D)    1     4.781421      0.507932      4.781421      ok
+Implementation 1 (Serial)   4     2.407163      1.000000      2.407163      ok
+Implementation 2 (MM-1D)    4     0.522165      4.609966      2.088660      ok
+Implementation 3 (MM-2D)    4     1.484005      1.622072      5.936020      ok
+Implementation 1 (Serial)   9     2.361257      1.000000      2.361257      ok
+Implementation 2 (MM-1D)    9     0.285423      8.272834      2.568807      ok
+Implementation 3 (MM-2D)    9     1.551917      1.521510      13.967253     ok
+
+CSV written to: /home/pbclevidence/MPI-MM-algorithms/csvs/M600_N600_Q600.csv
+SVG graph written to: /home/pbclevidence/MPI-MM-algorithms/graphs/M600_N600_Q600.svg
