@@ -9,7 +9,7 @@ ANALYSIS_PATH = Path("./csvs/shape_analysis.csv")
 
 FIELDNAMES = [
     "implementation", "m", "n", "q", "p",
-    "seconds", "speedup", "cost", "exit_code", "status",
+    "seconds", "speedup", "serial_speedup", "cost", "exit_code", "status",
     "command", "raw_output",
     # derived shape fields
     "a_size", "b_size", "c_size", "total_ops",
@@ -96,24 +96,98 @@ def enrich_row(row):
 
     return row
 
+
+def build_baseline_lookups(rows):
+    serial_impl = "Implementation 1 (Serial)"
+    serial_lookup = {}
+    p1_lookup = {}
+
+    for _filename, row in rows:
+        if row.get("status", "").strip('"') != "ok":
+            continue
+
+        try:
+            impl = row["implementation"].strip('"')
+            m = int(row["m"])
+            n = int(row["n"])
+            q = int(row["q"])
+            p = int(row["p"])
+            seconds = float(row["seconds"])
+        except (ValueError, KeyError):
+            continue
+
+        if impl == serial_impl:
+            serial_lookup[(m, n, q)] = seconds
+        elif p == 1:
+            p1_lookup[(impl, m, n, q)] = seconds
+
+    return serial_lookup, p1_lookup
+
+
+def recompute_metrics(row, serial_lookup, p1_lookup):
+    row = dict(row)
+
+    try:
+        impl = row["implementation"].strip('"')
+        m = int(row["m"])
+        n = int(row["n"])
+        q = int(row["q"])
+        p = int(row["p"])
+        seconds = float(row["seconds"])
+    except (ValueError, KeyError):
+        return row
+
+    if row.get("status", "").strip('"') != "ok":
+        row["speedup"] = ""
+        row["serial_speedup"] = ""
+        row["cost"] = ""
+        return row
+
+    serial_impl = "Implementation 1 (Serial)"
+    row["cost"] = "{:.6f}".format(seconds if impl == serial_impl else p * seconds)
+
+    if impl == serial_impl:
+        row["speedup"] = "{:.6f}".format(1.0)
+        row["serial_speedup"] = "{:.6f}".format(1.0)
+        return row
+
+    p1_seconds = p1_lookup.get((impl, m, n, q))
+    serial_seconds = serial_lookup.get((m, n, q))
+
+    row["speedup"] = (
+        "{:.6f}".format(p1_seconds / seconds)
+        if p1_seconds is not None and seconds > 0.0
+        else ""
+    )
+    row["serial_speedup"] = (
+        "{:.6f}".format(serial_seconds / seconds)
+        if serial_seconds is not None and seconds > 0.0
+        else ""
+    )
+    return row
+
 def write_combined(rows):
+    serial_lookup, p1_lookup = build_baseline_lookups(rows)
     with open(OUTPUT_PATH, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDNAMES, extrasaction="ignore")
         writer.writeheader()
         for _filename, row in rows:
-            enriched = enrich_row(dict(row))
+            enriched = enrich_row(recompute_metrics(row, serial_lookup, p1_lookup))
             writer.writerow(enriched)
     print("Combined CSV written to: " + str(OUTPUT_PATH))
 
 def write_shape_analysis(rows):
     """
     Aggregate rows by (implementation, shape_type, p) and compute
-    average seconds, average speedup, average cost across all matching runs.
+    average seconds, average speedup, average serial-relative speedup,
+    and average cost across all matching runs.
     Only includes rows with status == ok.
     """
     # group by (implementation, shape_type, m, n, q, p)
+    serial_lookup, p1_lookup = build_baseline_lookups(rows)
     groups = {}
     for _filename, row in rows:
+        row = recompute_metrics(row, serial_lookup, p1_lookup)
         if row.get("status", "").strip('"') != "ok":
             continue
         try:
@@ -130,23 +204,31 @@ def write_shape_analysis(rows):
         total_ops = 2 * m * n * q
 
         speedup_str = row.get("speedup", "").strip()
+        serial_speedup_str = row.get("serial_speedup", "").strip()
         cost_str = row.get("cost", "").strip()
         speedup = float(speedup_str) if speedup_str and speedup_str != "-" else None
+        serial_speedup = (
+            float(serial_speedup_str)
+            if serial_speedup_str and serial_speedup_str != "-"
+            else None
+        )
         cost = float(cost_str) if cost_str and cost_str != "-" else None
 
         key = (impl, shape_type, m, n, q, p, total_ops)
         if key not in groups:
-            groups[key] = {"seconds": [], "speedup": [], "cost": []}
+            groups[key] = {"seconds": [], "speedup": [], "serial_speedup": [], "cost": []}
 
         groups[key]["seconds"].append(seconds)
         if speedup is not None:
             groups[key]["speedup"].append(speedup)
+        if serial_speedup is not None:
+            groups[key]["serial_speedup"].append(serial_speedup)
         if cost is not None:
             groups[key]["cost"].append(cost)
 
     analysis_fields = [
         "implementation", "shape_type", "m", "n", "q", "p", "total_ops",
-        "avg_seconds", "avg_speedup", "avg_cost", "sample_count"
+        "avg_seconds", "avg_speedup", "avg_serial_speedup", "avg_cost", "sample_count"
     ]
 
     with open(ANALYSIS_PATH, "w", newline="") as f:
@@ -156,10 +238,15 @@ def write_shape_analysis(rows):
         for (impl, shape_type, m, n, q, p, total_ops), data in sorted(groups.items()):
             seconds_list = data["seconds"]
             speedup_list = data["speedup"]
+            serial_speedup_list = data["serial_speedup"]
             cost_list = data["cost"]
 
             avg_seconds = sum(seconds_list) / len(seconds_list)
             avg_speedup = sum(speedup_list) / len(speedup_list) if speedup_list else ""
+            avg_serial_speedup = (
+                sum(serial_speedup_list) / len(serial_speedup_list)
+                if serial_speedup_list else ""
+            )
             avg_cost = sum(cost_list) / len(cost_list) if cost_list else ""
 
             writer.writerow({
@@ -172,6 +259,11 @@ def write_shape_analysis(rows):
                 "total_ops": total_ops,
                 "avg_seconds": "{:.9f}".format(avg_seconds),
                 "avg_speedup": "{:.6f}".format(avg_speedup) if avg_speedup != "" else "",
+                "avg_serial_speedup": (
+                    "{:.6f}".format(avg_serial_speedup)
+                    if avg_serial_speedup != ""
+                    else ""
+                ),
                 "avg_cost": "{:.9f}".format(avg_cost) if avg_cost != "" else "",
                 "sample_count": len(seconds_list)
             })
