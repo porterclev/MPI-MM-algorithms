@@ -52,7 +52,6 @@ if __name__ == "__main__":
                     "#SBATCH --mem=32G",
                     "#SBATCH --output=" + out_file,
                     "",
-                    "module load openmpi/3.1.6",
                     "export PATH=/apps/openmpi3/bin:$PATH",
 		            "export LD_LIBRARY_PATH=/apps/openmpi3/lib:$LD_LIBRARY_PATH",
                     "cd " + str(SCRIPT_DIR),
