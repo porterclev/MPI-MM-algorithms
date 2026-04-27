@@ -17,9 +17,9 @@ if __name__ == "__main__":
     print("=============Finished Building=============")
 
     scaler = 600
-    M = list(range(1 * scaler, 5 * scaler, 1 * scaler))
-    N = list(range(1 * scaler, 5 * scaler, 1 * scaler))
-    Q = list(range(1 * scaler, 5 * scaler, 1 * scaler))
+    M = list(range(1 * scaler, 6 * scaler, 1 * scaler))
+    N = list(range(1 * scaler, 6 * scaler, 1 * scaler))
+    Q = list(range(1 * scaler, 6 * scaler, 1 * scaler))
     P = "1,4,9,16,25"
     MAX_P = max(int(x) for x in P.split(","))
 
@@ -47,10 +47,9 @@ if __name__ == "__main__":
                     "#SBATCH --job-name=" + job_name,
                     "#SBATCH --partition=compute",
                     "#SBATCH --nodes=1",
-                    "#SBATCH --ntasks=" + str(MAX_P),
-                    "#SBATCH --cpus-per-task=1",
-                    "#SBATCH --mem=16G",
-                    "#SBATCH --time=01:00:00",
+                    "#SBATCH --ntasks=1",
+                    "#SBATCH --cpus-per-task=" + str(MAX_P),
+                    "#SBATCH --mem=32G",
                     "#SBATCH --output=" + out_file,
                     "",
                     "module load openmpi/3.1.6",

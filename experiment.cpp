@@ -465,7 +465,7 @@ CommandResult run_implementation(const ImplementationInfo& implementation, int m
 int main(int argc, char* argv[]){
     try {
         omp_set_num_threads(4);
-        int TRIALS = 3;
+        int TRIALS = 1;
         const Config config = parse_args(argc, argv);
 
         int M = config.m;
