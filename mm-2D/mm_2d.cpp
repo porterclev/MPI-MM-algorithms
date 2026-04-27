@@ -1,5 +1,6 @@
 #include <mpi.h>
 
+#include <chrono>
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -15,6 +16,12 @@ using std::endl;
 using std::size_t;
 using std::string;
 using std::vector;
+
+static const int TAG_A_BLOCK = 100;
+static const int TAG_B_BLOCK = 200;
+static const int TAG_C_BLOCK = 300;
+static const int TAG_A_PANEL_BASE = 400;
+static const int TAG_B_PANEL_BASE = 500;
 
 static inline double &elem(vector<double> &M, int cols, int r, int c) {
     return M[r * cols + c];
@@ -97,6 +104,42 @@ bool almost_equal(const vector<double> &X, const vector<double> &Y, double eps =
     return true;
 }
 
+void send_row_panel(const vector<double> &panel, int row, int root_col, int sqrtP) {
+    for (int col = 0; col < sqrtP; ++col) {
+        if (col == root_col) {
+            continue;
+        }
+        const int dest = row * sqrtP + col;
+        MPI_Send(panel.data(), static_cast<int>(panel.size()), MPI_DOUBLE,
+                 dest, TAG_A_PANEL_BASE + root_col, MPI_COMM_WORLD);
+    }
+}
+
+void recv_row_panel(vector<double> &panel, int row, int root_col, int sqrtP) {
+    const int src = row * sqrtP + root_col;
+    MPI_Status status;
+    MPI_Recv(panel.data(), static_cast<int>(panel.size()), MPI_DOUBLE,
+             src, TAG_A_PANEL_BASE + root_col, MPI_COMM_WORLD, &status);
+}
+
+void send_col_panel(const vector<double> &panel, int col, int root_row, int sqrtP) {
+    for (int row = 0; row < sqrtP; ++row) {
+        if (row == root_row) {
+            continue;
+        }
+        const int dest = row * sqrtP + col;
+        MPI_Send(panel.data(), static_cast<int>(panel.size()), MPI_DOUBLE,
+                 dest, TAG_B_PANEL_BASE + root_row, MPI_COMM_WORLD);
+    }
+}
+
+void recv_col_panel(vector<double> &panel, int col, int root_row, int sqrtP) {
+    const int src = root_row * sqrtP + col;
+    MPI_Status status;
+    MPI_Recv(panel.data(), static_cast<int>(panel.size()), MPI_DOUBLE,
+             src, TAG_B_PANEL_BASE + root_row, MPI_COMM_WORLD, &status);
+}
+
 void print_matrix(const vector<double> &M, int rows, int cols, const string &name) {
     cout << name << " =\n";
     for (int i = 0; i < rows; ++i) {
@@ -176,11 +219,6 @@ int main(int argc, char **argv) {
     vector<double> localB(b_block_elems, 0.0);
     vector<double> localC(c_block_elems, 0.0);
 
-    MPI_Comm row_comm;
-    MPI_Comm col_comm;
-    MPI_Comm_split(MPI_COMM_WORLD, proc_row, proc_col, &row_comm);
-    MPI_Comm_split(MPI_COMM_WORLD, proc_col, proc_row, &col_comm);
-
     if (rank == 0) {
         A = make_matrix(m, n, 1);
         B = make_matrix(n, q, 2);
@@ -188,8 +226,7 @@ int main(int argc, char **argv) {
         C_serial.assign(m * q, 0.0);
     }
 
-    MPI_Barrier(MPI_COMM_WORLD);
-    const double parallel_start = MPI_Wtime();
+    const auto parallel_start = std::chrono::steady_clock::now();
 
     if (rank == 0) {
         for (int dest = 0; dest < size; ++dest) {
@@ -215,8 +252,9 @@ int main(int argc, char **argv) {
             }
         }
     } else {
-        MPI_Recv(localA.data(), a_block_elems, MPI_DOUBLE, 0, 100, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        MPI_Recv(localB.data(), b_block_elems, MPI_DOUBLE, 0, 200, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Status status;
+        MPI_Recv(localA.data(), a_block_elems, MPI_DOUBLE, 0, TAG_A_BLOCK, MPI_COMM_WORLD, &status);
+        MPI_Recv(localB.data(), b_block_elems, MPI_DOUBLE, 0, TAG_B_BLOCK, MPI_COMM_WORLD, &status);
     }
 
     vector<double> a_panel(a_block_elems, 0.0);
@@ -225,13 +263,17 @@ int main(int argc, char **argv) {
     for (int blk = 0; blk < sqrtP; ++blk) {
         if (proc_col == blk) {
             a_panel = localA;
+            send_row_panel(a_panel, proc_row, blk, sqrtP);
+        } else {
+            recv_row_panel(a_panel, proc_row, blk, sqrtP);
         }
-        MPI_Bcast(a_panel.data(), a_block_elems, MPI_DOUBLE, blk, row_comm);
 
         if (proc_row == blk) {
             b_panel = localB;
+            send_col_panel(b_panel, proc_col, blk, sqrtP);
+        } else {
+            recv_col_panel(b_panel, proc_col, blk, sqrtP);
         }
-        MPI_Bcast(b_panel.data(), b_block_elems, MPI_DOUBLE, blk, col_comm);
 
         local_block_multiply_add(a_panel, b_panel, localC,
                                  block_rows_A, block_cols_A, block_cols_B);
@@ -244,8 +286,9 @@ int main(int argc, char **argv) {
 
         for (int src = 1; src < size; ++src) {
             vector<double> recvC(c_block_elems, 0.0);
+            MPI_Status status;
             MPI_Recv(recvC.data(), static_cast<int>(recvC.size()), MPI_DOUBLE,
-                     src, 300, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                     src, TAG_C_BLOCK, MPI_COMM_WORLD, &status);
 
             const int src_row = src / sqrtP;
             const int src_col = src % sqrtP;
@@ -254,12 +297,12 @@ int main(int argc, char **argv) {
                         src_col * block_cols_C, block_cols_C);
         }
     } else {
-        MPI_Send(localC.data(), c_block_elems, MPI_DOUBLE, 0, 300, MPI_COMM_WORLD);
+        MPI_Send(localC.data(), c_block_elems, MPI_DOUBLE, 0, TAG_C_BLOCK, MPI_COMM_WORLD);
     }
 
     if (rank == 0) {
-        const double parallel_end = MPI_Wtime();
-        const double parallel_time = parallel_end - parallel_start;
+        const auto parallel_end = std::chrono::steady_clock::now();
+        const double parallel_time = std::chrono::duration<double>(parallel_end - parallel_start).count();
 
         serial_mm(A, B, C_serial, m, n, q);
         bool correct = almost_equal(C, C_serial);
@@ -284,14 +327,11 @@ int main(int argc, char **argv) {
         //     print_matrix(C_serial, m, q, "C_serial");
         // }
         if(!correct){
-            MPI_Comm_free(&row_comm);
-            MPI_Comm_free(&col_comm);
+            MPI_Finalize();
             return 1;
         }
     }
 
-    MPI_Comm_free(&row_comm);
-    MPI_Comm_free(&col_comm);
     MPI_Finalize();
     return 0;
 }
