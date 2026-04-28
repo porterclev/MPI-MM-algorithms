@@ -1,41 +1,92 @@
+#include <mpi.h>
 #include <iostream>
-#include <chrono>
-#include <random>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
-using namespace std;
-
-vector<double> make_matrix(int rows, int cols, int salt) {
-    vector<double> M(rows * cols);
-    for (int i = 0; i < rows; i++)
-        for (int j = 0; j < cols; j++)
-            M[i * cols + j] = (i + j + salt) % 10;
-    return M;
+void randomFill(std::vector<double>& M, int rows, int cols) {
+    for (int i = 0; i < rows * cols; i++) {
+        M[i] = static_cast<double>(rand() % 10);
+    }
 }
 
-int main(int argc, char *argv[]) {
-    int m = std::stoi(argv[1]);
-    int n = std::stoi(argv[2]);
-    int q = std::stoi(argv[3]);
+void printMatrix(const std::string& name,
+                 const std::vector<double>& M,
+                 int rows, int cols) {
+    std::cout << name << " (" << rows << " x " << cols << "):\n";
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            std::cout << M[i * cols + j];
+            if (j < cols - 1) std::cout << "\t";
+        }
+        std::cout << "\n";
+    }
+    std::cout << "\n";
+}
 
-    vector<double> A = make_matrix(m, n, 1);
-    vector<double> B = make_matrix(n, q, 2);
-    vector<double> C(m * q, 0.0);
+int main(int argc, char* argv[]) {
 
-    auto start = chrono::high_resolution_clock::now();
+    MPI_Init(&argc, &argv);
 
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < q; j++) {
-            for (int k = 0; k < n; k++) {
-                C[i * q + j] += A[i * n + k] * B[k * q + j];
+    int rank, size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+    if (rank == 0) {
+
+        int m, n, q;
+
+        if (argc == 4) {
+            m = std::atoi(argv[1]);
+            n = std::atoi(argv[2]);
+            q = std::atoi(argv[3]);
+        } else {
+            m = 4;
+            n = 4;
+            q = 4;
+        }
+
+        std::cout << "MM-ser: Serial Matrix Multiplication\n";
+        std::cout << "A(" << m << " x " << n << ") * B("
+                  << n << " x " << q << ") = C("
+                  << m << " x " << q << ")\n\n";
+
+        std::vector<double> A(m * n, 0.0);
+        std::vector<double> B(n * q, 0.0);
+        std::vector<double> C(m * q, 0.0);
+
+        srand(static_cast<unsigned int>(time(nullptr)));
+        randomFill(A, m, n);
+        randomFill(B, n, q);
+
+        bool verbose = (m <= 8 && n <= 8 && q <= 8);
+        if (verbose) {
+            printMatrix("A", A, m, n);
+            printMatrix("B", B, n, q);
+        }
+
+        double t_start = MPI_Wtime();
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < q; j++) {
+                double sum = 0.0;
+                for (int k = 0; k < n; k++) {
+                    sum += A[i * n + k] * B[k * q + j];
+                }
+                C[i * q + j] = sum;
             }
         }
+
+        double t_end = MPI_Wtime();
+        double elapsed = t_end - t_start;
+
+        if (verbose) {
+            printMatrix("C = A * B", C, m, q);
+        }
+
+        std::cout << "Time: " << elapsed << " seconds\n";
     }
 
-    auto end = chrono::high_resolution_clock::now();
-    double time_taken = chrono::duration<double>(end - start).count();
-
-    cout << "Time: " << std::fixed << time_taken << " seconds" << endl;
-
+    MPI_Finalize();
     return 0;
 }
