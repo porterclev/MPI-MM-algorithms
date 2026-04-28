@@ -1,0 +1,95 @@
+P vs Runtime ranking  |  Implementation 2 (MM-1D)
+  Overall rank uses average placement across available P values.
+  Metric direction: lower is better
+  1. m_dominant             avg_rank=1.20 avg_value=9.753459 P=1,4,9,16,25
+  2. q_dominant             avg_rank=1.80 avg_value=10.266980 P=1,4,9,16,25
+  3. square_outer           avg_rank=3.40 avg_value=16.115963 P=1,4,9,16,25
+  4. n_dominant             avg_rank=3.60 avg_value=15.241749 P=1,4,9,16,25
+  5. mixed                  avg_rank=5.40 avg_value=20.452742 P=1,4,9,16,25
+  6. uniform                avg_rank=5.60 avg_value=22.636039 P=1,4,9,16,25
+  Per-P ordering:
+    P=1: q_dominant (29.468771) > m_dominant (29.960068) > n_dominant (42.810896) > square_outer (50.971209) > mixed (62.008537) > uniform (71.869676)
+    P=4: m_dominant (8.054663) > q_dominant (8.458454) > n_dominant (13.137586) > square_outer (13.986151) > mixed (17.689811) > uniform (19.108375)
+    P=9: m_dominant (4.364363) > q_dominant (5.305358) > square_outer (6.362990) > n_dominant (7.937171) > mixed (9.221570) > uniform (9.462723)
+    P=16: m_dominant (2.942235) > q_dominant (3.532808) > square_outer (4.275093) > n_dominant (5.833907) > uniform (5.935168) > mixed (6.287063)
+    P=25: m_dominant (3.445965) > q_dominant (4.569508) > square_outer (4.984370) > n_dominant (6.489185) > uniform (6.804252) > mixed (7.056730)
+
+P vs Runtime ranking  |  Implementation 3 (MM-2D)
+  Overall rank uses average placement across available P values.
+  Metric direction: lower is better
+  1. m_dominant             avg_rank=1.20 avg_value=8.381990 P=1,4,9,16,25
+  2. q_dominant             avg_rank=1.80 avg_value=8.919777 P=1,4,9,16,25
+  3. n_dominant             avg_rank=3.20 avg_value=12.929946 P=1,4,9,16,25
+  4. square_outer           avg_rank=3.80 avg_value=14.558746 P=1,4,9,16,25
+  5. mixed                  avg_rank=5.40 avg_value=17.780884 P=1,4,9,16,25
+  6. uniform                avg_rank=5.60 avg_value=20.029010 P=1,4,9,16,25
+  Per-P ordering:
+    P=1: m_dominant (29.642925) > q_dominant (30.071911) > n_dominant (43.509854) > square_outer (50.777740) > mixed (62.011345) > uniform (71.785563)
+    P=4: m_dominant (5.215081) > q_dominant (6.930949) > n_dominant (9.764556) > square_outer (10.370791) > mixed (11.975933) > uniform (13.274597)
+    P=9: m_dominant (2.836766) > q_dominant (3.505059) > square_outer (5.095650) > n_dominant (6.241199) > uniform (6.522996) > mixed (6.774355)
+    P=16: m_dominant (2.094890) > q_dominant (2.097589) > n_dominant (2.482608) > square_outer (3.404146) > uniform (4.247201) > mixed (4.567613)
+    P=25: q_dominant (1.993380) > m_dominant (2.120288) > n_dominant (2.651513) > square_outer (3.145405) > mixed (3.575175) > uniform (4.314694)
+
+P vs Cost ranking  |  Implementation 2 (MM-1D)
+  Overall rank uses average placement across available P values.
+  Metric direction: lower is better
+  1. m_dominant             avg_rank=1.20 avg_value=46.936575 P=1,4,9,16,25
+  2. q_dominant             avg_rank=1.80 avg_value=56.362687 P=1,4,9,16,25
+  3. square_outer           avg_rank=3.40 avg_value=71.438692 P=1,4,9,16,25
+  4. n_dominant             avg_rank=3.60 avg_value=84.473584 P=1,4,9,16,25
+  5. mixed                  avg_rank=5.40 avg_value=98.554631 P=1,4,9,16,25
+  6. uniform                avg_rank=5.60 avg_value=99.707334 P=1,4,9,16,25
+  Per-P ordering:
+    P=1: q_dominant (29.468771) > m_dominant (29.960068) > n_dominant (42.810896) > square_outer (50.971209) > mixed (62.008537) > uniform (71.869676)
+    P=4: m_dominant (32.218653) > q_dominant (33.833816) > n_dominant (52.550345) > square_outer (55.944604) > mixed (70.759243) > uniform (76.433500)
+    P=9: m_dominant (39.279268) > q_dominant (47.748226) > square_outer (57.266913) > n_dominant (71.434535) > mixed (82.994127) > uniform (85.164504)
+    P=16: m_dominant (47.075759) > q_dominant (56.524926) > square_outer (68.401488) > n_dominant (93.342511) > uniform (94.962681) > mixed (100.593005)
+    P=25: m_dominant (86.149127) > q_dominant (114.237695) > square_outer (124.609244) > n_dominant (162.229635) > uniform (170.106311) > mixed (176.418242)
+
+P vs Cost ranking  |  Implementation 3 (MM-2D)
+  Overall rank uses average placement across available P values.
+  Metric direction: lower is better
+  1. m_dominant             avg_rank=1.20 avg_value=32.511917 P=1,4,9,16,25
+  2. q_dominant             avg_rank=1.80 avg_value=34.547430 P=1,4,9,16,25
+  3. n_dominant             avg_rank=3.20 avg_value=48.949687 P=1,4,9,16,25
+  4. square_outer           avg_rank=3.80 avg_value=54.244641 P=1,4,9,16,25
+  5. mixed                  avg_rank=5.40 avg_value=66.669091 P=1,4,9,16,25
+  6. uniform                avg_rank=5.60 avg_value=71.882697 P=1,4,9,16,25
+  Per-P ordering:
+    P=1: m_dominant (29.642925) > q_dominant (30.071911) > n_dominant (43.509854) > square_outer (50.777740) > mixed (62.011345) > uniform (71.785563)
+    P=4: m_dominant (20.860323) > q_dominant (27.723795) > n_dominant (39.058224) > square_outer (41.483166) > mixed (47.903731) > uniform (53.098386)
+    P=9: m_dominant (25.530893) > q_dominant (31.545530) > square_outer (45.860846) > n_dominant (56.170794) > uniform (58.706960) > mixed (60.969198)
+    P=16: m_dominant (33.518246) > q_dominant (33.561423) > n_dominant (39.721736) > square_outer (54.466335) > uniform (67.955216) > mixed (73.081810)
+    P=25: q_dominant (49.834493) > m_dominant (53.007199) > n_dominant (66.287826) > square_outer (78.635118) > mixed (89.379369) > uniform (107.867357)
+
+P vs Speedup ranking  |  Implementation 2 (MM-1D)
+  Overall rank uses average placement across available P values.
+  Metric direction: higher is better
+  1. uniform                avg_rank=2.20 avg_value=7.005556 P=1,4,9,16,25
+  2. square_outer           avg_rank=2.60 avg_value=6.960804 P=1,4,9,16,25
+  3. m_dominant             avg_rank=2.60 avg_value=6.092261 P=1,4,9,16,25
+  4. mixed                  avg_rank=3.40 avg_value=5.975929 P=1,4,9,16,25
+  5. q_dominant             avg_rank=5.00 avg_value=4.965787 P=1,4,9,16,25
+  6. n_dominant             avg_rank=5.20 avg_value=4.717588 P=1,4,9,16,25
+  Per-P ordering:
+    P=1: m_dominant (1.000000) > mixed (1.000000) > n_dominant (1.000000) > q_dominant (1.000000) > square_outer (1.000000) > uniform (1.000000)
+    P=4: uniform (3.761161) > m_dominant (3.719593) > square_outer (3.644406) > mixed (3.505325) > q_dominant (3.483943) > n_dominant (3.258658)
+    P=9: square_outer (8.010575) > uniform (7.595031) > m_dominant (6.864705) > mixed (6.724293) > q_dominant (5.554530) > n_dominant (5.393723)
+    P=16: uniform (12.109123) > square_outer (11.922830) > m_dominant (10.182758) > mixed (9.862879) > q_dominant (8.341459) > n_dominant (7.338289)
+    P=25: uniform (10.562465) > square_outer (10.226209) > mixed (8.787149) > m_dominant (8.694246) > n_dominant (6.597268) > q_dominant (6.449003)
+
+P vs Speedup ranking  |  Implementation 3 (MM-2D)
+  Overall rank uses average placement across available P values.
+  Metric direction: higher is better
+  1. uniform                avg_rank=2.60 avg_value=10.190411 P=1,4,9,16,25
+  2. m_dominant             avg_rank=3.00 avg_value=9.052870 P=1,4,9,16,25
+  3. mixed                  avg_rank=3.20 avg_value=9.250626 P=1,4,9,16,25
+  4. n_dominant             avg_rank=3.60 avg_value=9.272519 P=1,4,9,16,25
+  5. square_outer           avg_rank=3.80 avg_value=9.384211 P=1,4,9,16,25
+  6. q_dominant             avg_rank=4.80 avg_value=8.668134 P=1,4,9,16,25
+  Per-P ordering:
+    P=1: m_dominant (1.000000) > mixed (1.000000) > n_dominant (1.000000) > q_dominant (1.000000) > square_outer (1.000000) > uniform (1.000000)
+    P=4: m_dominant (5.684078) > uniform (5.407740) > mixed (5.177997) > square_outer (4.896226) > n_dominant (4.455897) > q_dominant (4.338787)
+    P=9: uniform (11.005000) > m_dominant (10.449550) > square_outer (9.964920) > mixed (9.153837) > q_dominant (8.579574) > n_dominant (6.971393)
+    P=16: n_dominant (17.525862) > uniform (16.901852) > square_outer (14.916440) > q_dominant (14.336418) > m_dominant (14.150108) > mixed (13.576313)
+    P=25: mixed (17.344983) > uniform (16.637462) > n_dominant (16.409444) > square_outer (16.143468) > q_dominant (15.085892) > m_dominant (13.980613)

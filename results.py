@@ -30,6 +30,7 @@ ANALYSIS_CSV = Path("./csvs/shape_analysis.csv")
 COMBINED_CSV = Path("./csvs/combined_results.csv")
 GRAPH_DIR    = Path("./analysis_graphs")
 GRAPH_DIR.mkdir(parents=True, exist_ok=True)
+RANKING_PATH = GRAPH_DIR / "shape_rankings.txt"
 
 IMPL_COLORS = {
     "Implementation 1 (Serial)": "#1d4ed8",
@@ -267,6 +268,117 @@ def report_suspicious_scaling(rows, limit=12):
                 seconds=row["seconds"],
             )
         )
+
+
+def rank_shapes_by_metric(rows, metric_key, metric_label, higher_is_better):
+    targets = ["Implementation 2 (MM-1D)", "Implementation 3 (MM-2D)"]
+    sections = []
+
+    for impl in targets:
+        subrows = [r for r in rows
+                   if r["implementation"] == impl
+                   and safe_float(r.get(metric_key)) is not None
+                   and safe_int(r.get("p")) is not None]
+
+        by_p = defaultdict(list)
+        for r in subrows:
+            by_p[safe_int(r["p"])].append((r["shape_type"], safe_float(r[metric_key])))
+
+        if not by_p:
+            continue
+
+        shape_stats = defaultdict(lambda: {
+            "ranks": [],
+            "values": [],
+            "p_values": [],
+        })
+        p_rankings = []
+
+        for p in sorted(by_p):
+            ranked = sorted(
+                by_p[p],
+                key=lambda item: item[1],
+                reverse=higher_is_better,
+            )
+            p_rankings.append((p, ranked))
+
+            for rank, (shape, value) in enumerate(ranked, start=1):
+                shape_stats[shape]["ranks"].append(rank)
+                shape_stats[shape]["values"].append(value)
+                shape_stats[shape]["p_values"].append(p)
+
+        overall = []
+        for shape, stats in shape_stats.items():
+            avg_rank = sum(stats["ranks"]) / len(stats["ranks"])
+            avg_value = sum(stats["values"]) / len(stats["values"])
+            overall.append({
+                "shape": shape,
+                "avg_rank": avg_rank,
+                "avg_value": avg_value,
+                "p_values": sorted(stats["p_values"]),
+                "count": len(stats["ranks"]),
+            })
+
+        overall.sort(
+            key=lambda item: (
+                item["avg_rank"],
+                -item["avg_value"] if higher_is_better else item["avg_value"],
+                item["shape"],
+            )
+        )
+
+        lines = []
+        lines.append(metric_label + " ranking  |  " + impl)
+        lines.append("  Overall rank uses average placement across available P values.")
+        direction = "higher is better" if higher_is_better else "lower is better"
+        lines.append("  Metric direction: " + direction)
+        for idx, item in enumerate(overall, start=1):
+            lines.append(
+                "  {rank}. {shape:<22} avg_rank={avg_rank:.2f} avg_value={avg_value:.6f} P={p_values}".format(
+                    rank=idx,
+                    shape=item["shape"],
+                    avg_rank=item["avg_rank"],
+                    avg_value=item["avg_value"],
+                    p_values=",".join(str(p) for p in item["p_values"]),
+                )
+            )
+
+        lines.append("  Per-P ordering:")
+        for p, ranked in p_rankings:
+            parts = [
+                "{shape} ({value:.6f})".format(shape=shape, value=value)
+                for shape, value in ranked
+            ]
+            lines.append("    P={p}: ".format(p=p) + " > ".join(parts))
+
+        sections.append("\n".join(lines))
+
+    return sections
+
+
+def report_shape_rankings(rows):
+    metric_configs = [
+        ("avg_seconds", "P vs Runtime", False),
+        ("avg_cost", "P vs Cost", False),
+        ("aggregate_speedup", "P vs Speedup", True),
+    ]
+
+    sections = []
+    for metric_key, metric_label, higher_is_better in metric_configs:
+        sections.extend(
+            rank_shapes_by_metric(rows, metric_key, metric_label, higher_is_better)
+        )
+
+    if not sections:
+        print("\nShape rankings:")
+        print("  No ranking data available.")
+        return
+
+    report = "\n\n".join(sections)
+    print("\nShape rankings:")
+    print(report)
+    RANKING_PATH.write_text(report + "\n")
+    print("\nSaved: " + str(RANKING_PATH))
 
 
 # ── 1. Line plot: total_ops vs seconds by shape_type ────────────────────────
@@ -614,6 +726,7 @@ if __name__ == "__main__":
     print("Built " + str(len(bucket_rows)) + " aggregated shape buckets")
     summarize_failures(combined_rows)
     report_suspicious_scaling(combined_rows)
+    report_shape_rankings(bucket_rows)
 
     print("\nGenerating graphs in " + str(GRAPH_DIR) + "/")
     print("─" * 50)
