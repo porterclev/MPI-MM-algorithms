@@ -1,0 +1,26 @@
+Running P= 1... done
+Running P= 4... done
+Running P= 9... done
+Running P= 16... done
+Running P= 25... done
+
+Implementation              P     Seconds       Speedup       VsSerial      Cost          Status
+----------------------------------------------------------------------------------------------------
+Implementation 1 (Serial)   1     13.775733     1.000000      1.000000      13.775733     ok
+Implementation 2 (MM-1D)    1     13.287600     1.000000      1.036736      13.287600     ok
+Implementation 3 (MM-2D)    1     13.286149     1.000000      1.036849      13.286149     ok
+Implementation 1 (Serial)   4     13.775733     1.000000      1.000000      13.775733     ok
+Implementation 2 (MM-1D)    4     3.737210      3.555487      3.686101      14.948840     ok
+Implementation 3 (MM-2D)    4     1.947675      6.821543      7.072912      7.790700      ok
+Implementation 1 (Serial)   9     13.775733     1.000000      1.000000      13.775733     ok
+Implementation 2 (MM-1D)    9     1.930960      6.881344      7.134137      17.378640     ok
+Implementation 3 (MM-2D)    9     1.094630      12.137571     12.584830     9.851670      ok
+Implementation 1 (Serial)   16    13.775733     1.000000      1.000000      13.775733     ok
+Implementation 2 (MM-1D)    16    1.266390      10.492502     10.877955     20.262240     ok
+Implementation 3 (MM-2D)    16    0.801755      16.571333     17.181973     12.828080     ok
+Implementation 1 (Serial)   25    13.775733     1.000000      1.000000      13.775733     ok
+Implementation 2 (MM-1D)    25    1.494480      8.891119      9.217743      37.362000     ok
+Implementation 3 (MM-2D)    25    0.696114      19.086168     19.789478     17.402850     ok
+
+CSV written to: /home/pbclevidence/MPI-MM-algorithms/csvs/M1800_N1200_Q3000.csv
+SVG graph written to: /home/pbclevidence/MPI-MM-algorithms/graphs/M1800_N1200_Q3000.svg

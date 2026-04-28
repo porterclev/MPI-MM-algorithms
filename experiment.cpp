@@ -482,7 +482,7 @@ CommandResult run_implementation(const ImplementationInfo& implementation, int m
 
 int main(int argc, char* argv[]){
     try {
-        const int trials = 5;
+        const int trials = 1;
         const Config config = parse_args(argc, argv);
 
         int M = config.m;
